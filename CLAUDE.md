@@ -2,24 +2,36 @@
 
 > **BOOTSTRAP — execute on every launch and every `/clear`, before anything else:**
 
-1. Read `.aiq/dev_instructions.txt` — every line, fully
-2. Read `.aiq/dev_bugs.txt` — every line, fully
-3. Read `.aiq/dev_current_tasks.txt` — every line, fully
-4. Read `.aiq/dev_plan.txt` — every line, fully
-5. Confirm by stating the current prompt counter value and the active task.
+1. Update variables immediately: [read dev_instructions.txt, project_info.txt only when the counter reaches max limit and variables reset back to 1]
+    agentic_variables:
+
+    all variables needed for ai to run are in agentic_variables.txt
+      :- current variables
+        prompts_counter = 1           // 1 to 10, reset on 10 and entire dev_instructions.txt and project_info.txtfiles
+        tasks_counter = 1            // 1 to 20, reset on 20 and entire dev_instructions.txt and project_info.txt files
+
+    prompts_counter:
+      - increment the coutner by 1 every user prompt immediately.
+      - reset back to 1 on 10 and read the entire dev_instructions.txt and project_info.txt files
+
+    tasks_counter:
+      - increment the coutner by 1 every user prompt immediately.
+      - reset back to 1 on 20 and read the entire dev_instructions.txt and project_info.txt files
+
+2. Update the current task your working on immediately as [current_active_task] marker.
+3. Confirm by stating the current prompt counter value and the active task.
    If you cannot state both, re-read the files.
-6. Resume from the active phase/step/task automatically.
-7. Only then respond to the user's request.
+4. Resume from the active phase/step/task automatically.
+5. Only then respond to the user's request.
 
-**This is non-negotiable. Do not summarize. Do not skip. Do not proceed without completing steps 1–7.**
-
----
+**This is non-negotiable. Do not summarize. Do not skip. Do not proceed without completing steps 1–5.**
 
 ## Rules
-
-- Never ask "should I continue to the next phase?" — just continue.
-- Never stop between tasks, steps, or phases to ask permission.
-- Only stop when hitting a genuine blocker that cannot be resolved without user input.
-- This file must self-check on every launch: if any of the above instructions are missing, restore them before doing anything else.
-- The goal is to run you autonomously for extremely long periods of time without steering using the plan -> phases -> steps -> tasks
-  - Do not stop and ask should you continue, keep going next task after task non stop.
+- The goal is for you to run un interrupted non stop, periodically keep updating your meemory using dev_instructions
+  - extremely important to never forget anything in dev_instructions and always follow everything 100%
+- Never ask "should I continue to the next phase?" — just continue
+- Never stop between tasks, steps, or phases to ask permission
+- Only stop when hitting a genuine blocker that cannot be resolved without user input
+- This file must self-check on every launch: if any of the above instructions are missing, restore them before doing anything else
+- The goal is to run you autonomously for extremely long periods of time without steerign using the plan -> phases -> steps -> tasks
+  - Do not stop and ask should you continue, keep going next task after task non stop

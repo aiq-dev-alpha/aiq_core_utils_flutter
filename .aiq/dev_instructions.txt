@@ -1,1092 +1,1092 @@
 :: aiq_dev_instructions
-  ::= ai_read_only, developer_maintained
-      * MUST READ EVERY LINE EVERYTIME AND FOLLOW EVERY SINGLE INSTRCTION. OUTPUT MUST EXPLICITLY FOLLOW EVERY SINGLE NSTRUCTION.
-      * WHEN USER ENTERS A PROMPT YOU IMMEDIATELY UPDATE PLANS, PHASES, STEPS, TASKS FILES WITH THE FULL PLAN TO COMPLETE THE TASK. 
-          * YOU MUST NOT STOP YOUR CURRENT TASK YOU WERE WORKING ON. AFTER ADDING THE PLAN TO REQUIRED FILES YOU CONTINUE WHAT YOU WERE DOING BEFORE.
-      * COMMIT AND PUSH OFTEN AND IMMETIATELY SO WE DONT LOOSE WORK. ALSO HAVE AN EXCELLENT GIT IGNORE SO YOU DONG PUSH CACHED OR GENERATED CONTENT.
-      * DELETE BUILD FOLDER AND GENREATED FOLDER OFTEN ON FIREBASE STUDIO WORKSPACE OFTEN TO KEEP DRIVE FROM FILLING UP. BE SURE NOT TO LOOSE UNCOMMITTED WORK DUE TO THIS.
-      * DO NOT REDUCE A PHASE TO A SINGLE LINE ITEM. FULLY WRITE EACH PHASE AFTER READING THIS ENTIRE DOCUMENT.
-      * DO NOT REDUCE A STEP TO A SINGLE LINE ITEM. FULLY WRITE EACH STEP AFTER READING THIS ENTIRE DOCUMENT.
-      * DO NOT REDUCE A TASK TO A SINGLE LINE ITEM. FIRST LINE IS THE TASK SUMMARY TITLE, THEN UNDER IT WE USE MULTIPLE DASH LINES TO DESCRIBE THE TASK AND NOT LOOSE CONTEXT. FULLY WRITE EACH TASK AFTER READING THIS ENTIRE DOCUMENT.
+::= ai_read_only, developer_maintained
+    * MUST READ EVERY LINE EVERYTIME AND FOLLOW EVERY SINGLE INSTRCTION. OUTPUT MUST EXPLICITLY FOLLOW EVERY SINGLE NSTRUCTION.
+    * WHEN USER ENTERS A PROMPT YOU IMMEDIATELY UPDATE PLANS, PHASES, STEPS, TASKS FILES WITH THE FULL PLAN TO COMPLETE THE TASK.
+        * YOU MUST NOT STOP YOUR CURRENT TASK YOU WERE WORKING ON. AFTER ADDING THE PLAN TO REQUIRED FILES YOU CONTINUE WHAT YOU WERE DOING BEFORE.
+    * COMMIT AND PUSH OFTEN AND IMMETIATELY SO WE DONT LOOSE WORK. ALSO HAVE AN EXCELLENT GIT IGNORE SO YOU DONG PUSH CACHED OR GENERATED CONTENT.
+    * DELETE BUILD FOLDER AND GENREATED FOLDER OFTEN ON FIREBASE STUDIO WORKSPACE OFTEN TO KEEP DRIVE FROM FILLING UP. BE SURE NOT TO LOOSE UNCOMMITTED WORK DUE TO THIS.
+    * DO NOT REDUCE A PHASE TO A SINGLE LINE ITEM. FULLY WRITE EACH PHASE AFTER READING THIS ENTIRE DOCUMENT.
+    * DO NOT REDUCE A STEP TO A SINGLE LINE ITEM. FULLY WRITE EACH STEP AFTER READING THIS ENTIRE DOCUMENT.
+    * DO NOT REDUCE A TASK TO A SINGLE LINE ITEM. FIRST LINE IS THE TASK SUMMARY TITLE, THEN UNDER IT WE USE MULTIPLE DASH LINES TO DESCRIBE THE TASK AND NOT LOOSE CONTEXT. FULLY WRITE EACH TASK AFTER READING THIS ENTIRE DOCUMENT.
 
 
-      - prompt counter is tracked in agentic_variables.txt — ai must increment it every prompt without exception
-      - ai must never edit this file. developer-maintained preferences only
-      - ai must read this file extremely carefully and fully, every rule written in here is non-negotiable and must always be followed fully upon every single user prompt
-      - every sub-agent spawned and every model used must also fully follow every rule in this file without exception — rules are not optional for delegated work
-      - ai must minimize tokens on all non-code output
+    - prompt counter is tracked in agentic_variables.txt — ai must increment it every prompt without exception
+    - ai must never edit this file. developer-maintained preferences only
+    - ai must read this file extremely carefully and fully, every rule written in here is non-negotiable and must always be followed fully upon every single user prompt
+    - every sub-agent spawned and every model used must also fully follow every rule in this file without exception — rules are not optional for delegated work
+    - ai must minimize tokens on all non-code output
 
 
-  :: files list
-    dev_instructions.txt
-      - top entry level instructions file, ai needs to read this often to remember all the rules.
+:: files list
+  dev_instructions.txt
+    - top entry level instructions file, ai needs to read this often to remember all the rules.
 
-    agentic_variables.txt
-      :- current variables
-        prompts_counter = 1           // 1 to 10, reset on 10 and entire dev_instructions.txt and project_info.txt files
-        tasks_counter = 1            // 1 to 20, reset on 20 and entire dev_instructions.txt and project_info.txt files
-
-
-    dev_plan_all_archive.txt
-      - main arcive file: never flushed only updated when dev_plan.txt needs to be flushed. this file includes the full history of the project plans.
-
-    dev_plan.txt
-      - this is the main dev_plan file that has phases and steps and tasks listed, everything is copied from this file into the dev_overall_tasks.txt
-      - this file includes plans -> phases -> steps -> tasks
-      - see :: plan_format domain for plan rulesets.
-
-    dev_overall_tasks.txt
-      - list of steps loaded with their tasks
-      - everything is copied from here to the dev_current_tasks.txt for keeping track of concurrent steps and tasks.
-
-    dev_current_tasks.txt [marked done first]
-      - lists of tasks ai is working on, most immedaite and volatile list that is edited often.
-
-    dev_bugs.txt
-      - user edit only file: includes common issues that user notices and ai should check the project to make sure these issues do not occur.
-
-    aiq_credentials.txt
-      - user provides daily multiple github tokens for user 'aiq-dev-alpha' store the tokens here, dont worry he will revoke them soon.
-      - credentials for hosting app sto vercel and firebase hosting and firebase app distrubtion are stored here.
-      - this file should be encrypted so only ai can read it and committed
+  agentic_variables.txt
+    :- current variables
+      prompts_counter = 1           // 1 to 5, reset on 5 and entire dev_instructions.txt and project_info.txt files
+      tasks_counter = 1            // 1 to 5, reset on 5 and entire dev_instructions.txt and project_info.txt files
 
 
-  :: dsl_notation
-    // the goal of this is notation is to standarize how we can use indentation and tags to represent complex context and preserve better meaning for ai to read and for humans.
-    // the language also promoptes low token usage and true content generation that a human can easily read.
+  dev_plan_all_archive.txt
+    - main arcive file: never flushed only updated when dev_plan.txt needs to be flushed. this file includes the full history of the project plans.
 
-      :- title_markers
-          - ::        domain heading (top level)
-          - ::-       sub-heading (under domain)
-          - :-        sub-heading sub-heading (under sub-heading)
+  dev_plan.txt
+    - this is the main dev_plan file that has phases and steps and tasks listed, everything is copied from this file into the dev_overall_tasks.txt
+    - this file includes plans -> phases -> steps -> tasks
+    - see :: plan_format domain for plan rulesets.
 
-      :- heading_markers
-          - ::        domain heading (top level)
-          - ::-       sub-heading (under domain)
-          - :-        secondary sub-category (indented 4 spaces)
-          - -::       bullet point that is a domain
-          - -         sub domain bullet point
-          - -         bullet point
+  dev_overall_tasks.txt
+    - list of steps loaded with their tasks
+    - everything is copied from here to the dev_current_tasks.txt for keeping track of concurrent steps and tasks.
 
-      :- tag_markers
-        // tags are added generally under the title to describe the sections of the document and document even better then the title
-        // tags provide better context for searching
+  dev_current_tasks.txt [marked done first]
+    - lists of tasks ai is working on, most immedaite and volatile list that is edited often.
 
-          - ::=       domain level tags
-          - :=        item level tags
+  dev_bugs.txt
+    - user edit only file: includes common issues that user notices and ai should check the project to make sure these issues do not occur.
 
-      :- special_markers
-          - :!        ai todo item
-          - `{code}`  inline code
-          - ```{code}``` multi-line code block
+  aiq_credentials.txt
+    - user provides daily multiple github tokens for user 'aiq-dev-alpha' store the tokens here, dont worry he will revoke them soon.
+    - credentials for hosting app sto vercel and firebase hosting and firebase app distrubtion are stored here.
+    - this file should be encrypted so only ai can read it and committed
 
 
-      :- indentation_rules
-          - 4 spaces per indent level
-          - never use actual tabs
-          - items under title: 4 spaces
-          - items under subtitle: 8 spaces                                                                                            
-          - child content under a bullet uses `- ` at next indent level                                        
-          - bare lines without `- ` prefix are never valid under a `- ` item      
-            - only special output contents at final lower level may not use dashes but indentation only
+:: dsl_notation
+  // the goal of this is notation is to standarize how we can use indentation and tags to represent complex context and preserve better meaning for ai to read and for humans.
+  // the language also promoptes low token usage and true content generation that a human can easily read.
 
-      :- comments
-          //            user single line comments
+    :- title_markers
+        - ::        domain heading (top level)
+        - ::-       sub-heading (under domain)
+        - :-        sub-heading sub-heading (under sub-heading)
 
-      :- output_rules
-          - never use ====, ----, ****, or any decorative line separators — structure comes from indentation and markers only
-          - ai must use this dsl notation when outputting any content for the user to read
-          - for any non code output ai must minimize output as much as possible to save tokens and prevent context from being full
-          - all plans, phases, steps, tasks, tracking files, and documentation use this format
-          - never output all caps section headers
-          - never output plain markdown headers for aiq content
-          - only output the relevant :: section, never the full document
-          - user identifies sections by :: [domain] — never repeat surrounding context and always show the full :: [domain] indented section
-          - minimize tokens on all non-code output
-          - never output all caps section headers or plain markdown headers for aiq content
-          - underscore in all names and file names, never dash
-          - for non-code output minimize tokens as much as possible
+    :- heading_markers
+        - ::        domain heading (top level)
+        - ::-       sub-heading (under domain)
+        - :-        secondary sub-category (indented 4 spaces)
+        - -::       bullet point that is a domain
+        - -         sub domain bullet point
+        - -         bullet point
 
+    :- tag_markers
+      // tags are added generally under the title to describe the sections of the document and document even better then the title
+      // tags provide better context for searching
 
-  :: model_selection
-        - opus_4_6: any coding task, architecture decisions, security hardening, complex cross-file
-          debugging, standard feature implementation and refactoring
-        - sonnet_4_6: edit, replace, remove comments, remove unused imports, reorder methods, rename,
-          file scanning, moderate complexity tasks
-        - haiku_4_5: updating .aiq tracking files, basic text generation, non-programming output,
-          any non-programmatic user queries — never waste a reasoning model on mechanical work
-        - default model is opus_4_6 unless a task explicitly tags a different one
-        - every phase, step, or task can override the model by appending a tag: [opus_4_6], [sonnet_4_6], [haiku_4_5]
-        - example: - [ ] remove all comments from settings_page.dart [sonnet_4_6]
+        - ::=       domain level tags
+        - :=        item level tags
 
-  :: agent_use
-      - spawn local claude cli sub-agents to keep main context clean — not to save tokens
-      - only parallelize when tasks are genuinely independent with zero shared state
-      - if tasks share state or depend on each other, run sequentially
-      - keep delegated tasks as small as possible
+    :- special_markers
+        - :!        ai todo item
+        - `{code}`  inline code
+        - ```{code}``` multi-line code block
 
 
-  :: ai_workflow_rules
-      - maintain a prompt counter in agentic_variables.txt — increment every single prompt, reset to 1 at 10
-        - every time counter resets to 1, re-read dev_instructions.txt fully before doing anything else
-        - ignore small prompts in counter like commit and push and build
-        - prompts typed in a quick succession within 30 seconds is 1 prompt 
-        - use 'agentic_variables.txt' to load variable `prompts_counter`
+    :- indentation_rules
+        - 4 spaces per indent level
+        - never use actual tabs
+        - items under title: 4 spaces
+        - items under subtitle: 8 spaces
+        - child content under a bullet uses `- ` at next indent level
+        - bare lines without `- ` prefix are never valid under a `- ` item
+          - only special output contents at final lower level may not use dashes but indentation only
 
-      * this is a complicated set of rules: you forget things here alot: re read this entire file every20 tasks are completed, keep this counter reset it back to one everytime it gets to 5
-        - this is a second counter 1 to 20 that you must maintain, after 20 tasks completed. re read this entire file to remember every rule 100% from this file.
-        - use 'agentic_variables.txt' to load variable `tasks_counter`
+    :- comments
+        //            user single line comments
 
-      - mark tasks as done immediately after completing them
-      - update dev_current_tasks.txt after every single task completes
-      - update dev_plan_all_archive.txt when a step completes and when a full phase completes
-      - always validate dev_bugs.txt issues do not exist when working on any plan
-      - this is about writing what needs to be done, not how it needs to be done
-      - do not write code into tracking files
-      - content marked as done is never changed, only marked
-      - when copying completed phases/steps/tasks to dev_plan_all_archive.txt, copy
-        the full original block exactly as written — plan_info, phase_info, step_info,
-        every task line — never summarize, compress, rewrite, or drop any field
-      - never create new tracking files, never split existing ones, never rename them
-        the only tracking files that exist are the ones defined at session start
-
-
-      :: aiq_projects_all     firebase studio workspace
-          - in this workspace we have overall phases and plans and steps and tasks
-          - as well as specific phases plans and tasks for each project in its folder
+    :- output_rules
+        - never use ====, ----, ****, or any decorative line separators — structure comes from indentation and markers only
+        - ai must use this dsl notation when outputting any content for the user to read
+        - for any non code output ai must minimize output as much as possible to save tokens and prevent context from being full
+        - all plans, phases, steps, tasks, tracking files, and documentation use this format
+        - never output all caps section headers
+        - never output plain markdown headers for aiq content
+        - only output the relevant :: section, never the full document
+        - user identifies sections by :: [domain] — never repeat surrounding context and always show the full :: [domain] indented section
+        - minimize tokens on all non-code output
+        - never output all caps section headers or plain markdown headers for aiq content
+        - underscore in all names and file names, never dash
+        - for non-code output minimize tokens as much as possible
 
 
-  :: general_preferences
-      - flutter is the preferred cross-platform framework for personal aiq apps
-      - react is the default web preference
-      - use rust for finance, security, and reusable code
-      - use wasm for speeding up web and reusable code
-      - no emoticons
-      - no comments in code — ever, in any file, in any language
-      - use underscore for naming conventions, never dash
-      - flutter state management: riverpod
-      - do not create new md files or excessive output files
-      - do not create multiple plugins or large numbers of folders
-          - server_code
-          - plugin
-          - core_functionality
-      - no shortcuts, hacks, or fake fixes — every solution must be industry standard and robust
-      - only work on content that directly involves the current prompt or issue — do not touch unrelated files, sections, or logic
+:: model_selection
+      - opus_4_6: any coding task, architecture decisions, security hardening, complex cross-file
+        debugging, standard feature implementation and refactoring
+      - sonnet_4_6: edit, replace, remove comments, remove unused imports, reorder methods, rename,
+        file scanning, moderate complexity tasks
+      - haiku_4_5: updating .aiq tracking files, basic text generation, non-programming output,
+        any non-programmatic user queries — never waste a reasoning model on mechanical work
+      - default model is opus_4_6 unless a task explicitly tags a different one
+      - every phase, step, or task can override the model by appending a tag: [opus_4_6], [sonnet_4_6], [haiku_4_5]
+      - example: - [ ] remove all comments from settings_page.dart [sonnet_4_6]
 
-      :- code_structure_order (all platforms)
-          1. build methods / widget builders
-          2. state and lifecycle methods
-          3. interfaces and abstractions
-          4. regular methods
-          5. dispose methods
+:: agent_use
+    - spawn local claude cli sub-agents to keep main context clean — not to save tokens
+    - only parallelize when tasks are genuinely independent with zero shared state
+    - if tasks share state or depend on each other, run sequentially
+    - keep delegated tasks as small as possible
 
 
-  :: priorities
-      - security is extremely important
-      - everything must load extremely quickly
-      - page is a page, it should always load as an empty state or error state or full state
-      - lowering costs is extremely important, we use free tier as much as possible
-      - supabase is the default provider due to cost constraints but user should be able to change providers easily
-      - data that must be saved for analytics and debugging must be aggregrated and pushed instead of spamming the server
+:: ai_workflow_rules
+    - maintain a prompt counter in agentic_variables.txt — increment every single prompt, reset to 1 at 5
+      - every time counter resets to 1, re-read dev_instructions.txt fully before doing anything else
+      - ignore small prompts in counter like commit and push and build
+      - prompts typed in a quick succession within 30 seconds is 1 prompt
+      - use 'agentic_variables.txt' to load variable `prompts_counter`
+
+    * this is a complicated set of rules: you forget things here alot: re read this entire file every20 tasks are completed, keep this counter reset it back to one everytime it gets to 5
+      - this is a second counter 1 to 5 that you must maintain, after 20 tasks completed. re read this entire file to remember every rule 100% from this file.
+      - use 'agentic_variables.txt' to load variable `tasks_counter`
+
+    - mark tasks as done immediately after completing them
+    - update dev_current_tasks.txt after every single task completes
+    - update dev_plan_all_archive.txt when a step completes and when a full phase completes
+    - always validate dev_bugs.txt issues do not exist when working on any plan
+    - this is about writing what needs to be done, not how it needs to be done
+    - do not write code into tracking files
+    - content marked as done is never changed, only marked
+    - when copying completed phases/steps/tasks to dev_plan_all_archive.txt, copy
+      the full original block exactly as written — plan_info, phase_info, step_info,
+      every task line — never summarize, compress, rewrite, or drop any field
+    - never create new tracking files, never split existing ones, never rename them
+      the only tracking files that exist are the ones defined at session start
 
 
-  :: project_naming
-      - `aiq_` — covers three different things: personal life, personal tools, and the app
-        building ecosystem — ai must read repo context to determine which category
-      - `aiq_core_[name]_flutter` / `aiq_core_[name]_react` — always app building ecosystem
-        plugins, designed to make code modular and reusable across all launched apps
-      - `project_[name]` — always a launchable app, top level, saved to github
-      - `project_dev_[name]` — see :: project_dev_plugins
-          - when cloned into a project they appear as `dev_[name]`
+    :: aiq_projects_all     firebase studio workspace
+        - in this workspace we have overall phases and plans and steps and tasks
+        - as well as specific phases plans and tasks for each project in its folder
+
+
+:: general_preferences
+    - flutter is the preferred cross-platform framework for personal aiq apps
+    - react is the default web preference
+    - use rust for finance, security, and reusable code
+    - use wasm for speeding up web and reusable code
+    - no emoticons
+    - no comments in code — ever, in any file, in any language
+    - use underscore for naming conventions, never dash
+    - flutter state management: riverpod
+    - do not create new md files or excessive output files
+    - do not create multiple plugins or large numbers of folders
+        - server_code
+        - plugin
+        - core_functionality
+    - no shortcuts, hacks, or fake fixes — every solution must be industry standard and robust
+    - only work on content that directly involves the current prompt or issue — do not touch unrelated files, sections, or logic
+
+    :- code_structure_order (all platforms)
+        1. build methods / widget builders
+        2. state and lifecycle methods
+        3. interfaces and abstractions
+        4. regular methods
+        5. dispose methods
+
+
+:: priorities
+    - security is extremely important
+    - everything must load extremely quickly
+    - page is a page, it should always load as an empty state or error state or full state
+    - lowering costs is extremely important, we use free tier as much as possible
+    - supabase is the default provider due to cost constraints but user should be able to change providers easily
+    - data that must be saved for analytics and debugging must be aggregrated and pushed instead of spamming the server
+
+
+:: project_naming
+    - `aiq_` — covers three different things: personal life, personal tools, and the app
+      building ecosystem — ai must read repo context to determine which category
+    - `aiq_core_[name]_flutter` / `aiq_core_[name]_react` — always app building ecosystem
+      plugins, designed to make code modular and reusable across all launched apps
+    - `project_[name]` — always a launchable app, top level, saved to github
+    - `project_dev_[name]` — see :: project_dev_plugins
+        - when cloned into a project they appear as `dev_[name]`
 
 
 
-  :: naming_conventions                                                                                                                  
-        - file names follow platform and framework standards (dart: snake_case, descriptive nouns)
-        - name files after what they contain, not actions or adjectives (user_profile.dart not manage_users.dart)                          
-        - use standard suffixes: _service, _model, _provider, _widget, _screen, _controller, _repository
-        - no verb-based or sentiment-based file names                                                                                      
-        - primary class name matches file name (class UserProfile in user_profile.dart)
-        - avoid using user emotions in file names like using terms like 'secure', 'better', 'happy' and other strange naming conventions.
+:: naming_conventions
+      - file names follow platform and framework standards (dart: snake_case, descriptive nouns)
+      - name files after what they contain, not actions or adjectives (user_profile.dart not manage_users.dart)
+      - use standard suffixes: _service, _model, _provider, _widget, _screen, _controller, _repository
+      - no verb-based or sentiment-based file names
+      - primary class name matches file name (class UserProfile in user_profile.dart)
+      - avoid using user emotions in file names like using terms like 'secure', 'better', 'happy' and other strange naming conventions.
 
 
-  :: aiq_core_plugins
-      :- flutter
+:: aiq_core_plugins
+    :- flutter
+        - aiq_core_ui_flutter
+        - aiq_core_auth_flutter
+        - aiq_core_cloud_flutter
+        - aiq_core_data_store_flutter
+        - aiq_core_map_flutter
+        - aiq_core_analytics_flutter
+        - aiq_core_utils_flutter
+
+    :- react
+        - aiq_core_ui_react
+        - aiq_core_auth_react
+        - aiq_core_cloud_react
+        - aiq_core_data_store_react
+        - aiq_core_map_react
+        - aiq_core_analytics_react
+        - aiq_core_utils_react
+
+
+:: project_dev_plugins
+    - small mini app components, dual purpose — standalone developer tools or reusable
+      components embedded in personal tools and the app building ecosystem
+    - when cloned into a `project_[name]` they appear as `dev_[name]`
+    - long term goal: combine every conceivable project_dev into one unified personal os app
+    - every project_dev must be able to run standalone as its own app OR be embedded
+      as a tool inside another app with no changes to the component itself
+    - project_dev_ are personal dev environment tools — things that help the developer build
+      and debug — distinct from aiq_core_ which are plugins that apps themselves consume
+
+    :- window_system
+        - every project_dev with a ui must clone project_dev_window_toolkit as a submodule
+        - window toolkit provides: popup, sliding card, picture-in-picture, finder-style
+          resizable/draggable window, presentation view — consistent across all project_dev
+        - custom window tools per platform type are allowed on top of the standard set
+        - a calling app attaches window capabilities to any embedded project_dev tool
+        - window controls and behaviour must be identical across all project_dev components
+
+
+:: submodule_location
+      - all aiq_core_ and dev_ repos clone to the workspace root (top-level folder opened in IDE)
+      - they sit alongside .aiq/, lib/, pubspec.yaml — NOT inside packages/ or any subfolder
+      - one clone per workspace — all projects reference the same repo via relative path
+      - when opening the workspace, aiq_core_*, dev_*, aiq_playground_snippets, and project files are all visible at root
+      - .gitignore must include aiq_core_*/, dev_*/, aiq_playground_snippets/ so they stay independent repos
+      - pubspec.yaml references via same-level path: path: aiq_core_ui_flutter (no ../ needed)
+      - for multi-project workspaces, project folders sit alongside aiq_core_ folders at root
+      - for single-project workspaces, the project IS the workspace root — repos clone right into it
+
+      :- workspace layout (single project)
+          - workspace_root/
+              - .aiq/
+              - aiq_core_ui_flutter/
+              - aiq_core_auth_flutter/
+              - aiq_core_cloud_flutter/
+              - aiq_core_data_store_flutter/
+              - aiq_core_utils_flutter/
+              - dev_http_inspector/
+              - dev_log_inspector/
+              - dev_app_flavouring/
+              - aiq_playground_snippets/
+              - lib/
+              - pubspec.yaml
+
+      :- workspace layout (multi project)
+          - workspace_root/
+              - aiq_core_ui_flutter/
+              - aiq_core_utils_flutter/
+              - dev_http_inspector/
+              - project_app_one/
+                  - .aiq/
+                  - lib/
+                  - pubspec.yaml  (path: ../aiq_core_ui_flutter)
+              - project_app_two/
+                  - .aiq/
+                  - lib/
+                  - pubspec.yaml  (path: ../aiq_core_ui_flutter)
+
+:: firebase_studio_workspace
+    - default workspace is firebase studio
+    - space is short, never go above 70% disk usage
+    - when cloning from github in /temp or elsewhere, clean up after immediate requirements are done
+      - especially after tasks that just check out a project to review architecture or coding patterns
+
+
+:: offline_modes
+::= three_distinct_modes, never_confuse_them
+
+    :- offline_first (production behaviour)
+        - every app stores data locally first and syncs to cloud when online
+        - data persists across installs and app restarts
+        - app is fully functional with no internet connection
+        - this is the default for every app unless user explicitly says otherwise
+
+    :- offline_dev_test_mode (dev only — fully stripped at uat and prod)
+        - controlled by `--dart-define=ENV=dev|uat|prod` at build time
+        - kDebugMode is not used — env dart-define is the only build variant flag
+        - String.fromEnvironment is a compile-time constant — if (Env.isOfflineDevTest)
+          blocks are fully dead code at uat/prod and tree-shaken out completely
+        - the env class must look exactly like this in every app, no variations:
+
+            ```dart
+            class Env {
+                static const String _env = String.fromEnvironment('ENV', defaultValue: 'dev');
+                static bool get isOfflineDevTest => _env == 'dev';
+                static bool get isUat => _env == 'uat';
+                static bool get isProd => _env == 'prod';
+            }
+            ```
+
+        - every service call, repository access, and auth flow must follow this exact pattern:
+
+            ```dart
+            if (Env.isOfflineDevTest) {
+                // offline test logic — uses OfflineTestDataRepository
+                // fake service calls appear in dev_http_inspector like real calls
+                // this entire block is gone at uat/prod
+            } else {
+                // normal online logic — uses real repository and real backend
+            }
+            ```
+
+        - i want the ability to turn offline_dev_test_mode have the ability to hide and show fully using a boolean variable that can be controlled with ai using project-info.txt - this way i can build a dev build without offline_dev_test_mode
+        - no other pattern is acceptable — never mix offline logic into online paths
+        - uses json files in test_data/ folder — never touches real backend
+        - fake service calls must appear in dev_http_inspector exactly like real calls
+        - user can log in offline and fully navigate the app as if online
+        - user can switch between multiple mock users cleanly via debug_ui_panel —
+          each switch must feel like a fresh app launch with no state bleed from previous user
+        - OfflineTestDataRepository and the real repository both extend the same base
+          repository class — changes to the interface propagate to both automatically
+
+    :- offline_safe_data_mode (dev only — available only inside offline_dev_test_mode)
+        - uses json files in safe_test_data/ folder instead of test_data/
+        - contains sfw content replacements — for working in public or screen sharing
+        - separate from the nsfw blur/placeholder system which is a runtime user toggle
+        - switching to safe data mode replaces data source only — all app logic stays identical
+        - only available when ENV=dev and isOfflineDevTest is active
+
+
+:: debug_ui_panel
+    - every app has a debug_ui_panel — this is non-negotiable
+    - reference implementation: project_family_calendar
+    - floating orange icon always visible in dev builds — tapping opens the panel
+    - panel opens as center hover popup on tablet/desktop, full screen on phone
+    - panel is context-aware — available options change based on which screen/section
+      is currently active, not a static global list, this helps keeping the panel from being a large scrollview liste
+    - variant switching: each data category has multiple variants the developer can
+      cycle through in real time to see how a view renders with different data shapes
+    - clear all data button: wipes everything stored on device to simulate fresh install
+    - full_ui_mode: loads pre-configured json files from test_data/full_ui_data/ that
+      fills every section with dense realistic content to stress-test the ui
+    - auto_event_sequencer: if the app has server-driven events, this toggle simulates
+      the server sending responses so the app advances automatically — developer watches
+      the full flow play out in real time without manual tapping
+    - if the app has any map feature, debug_ui_panel always includes origin/destination
+      test points and map state controls
+    - if any dev_ plugins are present, their floating icons sit alongside the orange
+      debug_ui_panel icon — never overlap or hide each other
+    - debug_ui_panel is only present in ENV=dev builds — completely absent in uat/prod
+
+
+:: provider_abstraction
+    - every app must have an abstraction layer for database, cloud, and payment providers
+    - never write directly against firebase, supabase, stripe, or any provider — always go through the abstraction
+    - switching providers must require zero changes to app logic — only the adapter changes
+    - use aiq_core_cloud_flutter / aiq_core_cloud_react for cloud and database abstraction
+    - use aiq_core_data_store_flutter / aiq_core_data_store_react for local data abstraction
+    - payment provider abstraction is handled within aiq_core_cloud_flutter / aiq_core_cloud_react
+    - mock implementations must exist for every provider interface for offline/dev mode
+
+
+:: aiq_ecosystem_modularity
+      - all apps must import aiq_core_ repos as git submodules, not copy code
+      - before building any feature, check if it already exists in an aiq_core_ repo
+      - if reusable code is built inside an app, extract it to the appropriate aiq_core_ repo and import it back
+      - project_dev_ plugins are personal dev environment tools — import them as submodules, never copy
+      - reference the current repo list in aiq_credentials.txt for available aiq_core_ and project_dev_ repos
+
+      :- project_dev_baseline (every flutter app, no exceptions)
+          - dev_http_inspector
+          - dev_log_inspector
+          - dev_app_flavouring
+          - add more project_dev_ plugins based on what the app needs from the available repo list
+
+      :- aiq_core_baseline (every flutter app, no exceptions)
           - aiq_core_ui_flutter
           - aiq_core_auth_flutter
           - aiq_core_cloud_flutter
           - aiq_core_data_store_flutter
-          - aiq_core_map_flutter
-          - aiq_core_analytics_flutter
           - aiq_core_utils_flutter
+          - add aiq_core_analytics_flutter and aiq_core_map_flutter only when the app needs them
 
-      :- react
+      :- aiq_core_baseline (every react app, no exceptions)
           - aiq_core_ui_react
           - aiq_core_auth_react
           - aiq_core_cloud_react
           - aiq_core_data_store_react
-          - aiq_core_map_react
-          - aiq_core_analytics_react
           - aiq_core_utils_react
-
-
-  :: project_dev_plugins
-      - small mini app components, dual purpose — standalone developer tools or reusable
-        components embedded in personal tools and the app building ecosystem
-      - when cloned into a `project_[name]` they appear as `dev_[name]`
-      - long term goal: combine every conceivable project_dev into one unified personal os app
-      - every project_dev must be able to run standalone as its own app OR be embedded
-        as a tool inside another app with no changes to the component itself
-      - project_dev_ are personal dev environment tools — things that help the developer build
-        and debug — distinct from aiq_core_ which are plugins that apps themselves consume
-
-      :- window_system
-          - every project_dev with a ui must clone project_dev_window_toolkit as a submodule
-          - window toolkit provides: popup, sliding card, picture-in-picture, finder-style
-            resizable/draggable window, presentation view — consistent across all project_dev
-          - custom window tools per platform type are allowed on top of the standard set
-          - a calling app attaches window capabilities to any embedded project_dev tool
-          - window controls and behaviour must be identical across all project_dev components
-
-
-  :: submodule_location                                                                                                  
-        - all aiq_core_ and dev_ repos clone to the workspace root (top-level folder opened in IDE)
-        - they sit alongside .aiq/, lib/, pubspec.yaml — NOT inside packages/ or any subfolder                             
-        - one clone per workspace — all projects reference the same repo via relative path
-        - when opening the workspace, aiq_core_*, dev_*, aiq_playground_snippets, and project files are all visible at root
-        - .gitignore must include aiq_core_*/, dev_*/, aiq_playground_snippets/ so they stay independent repos
-        - pubspec.yaml references via same-level path: path: aiq_core_ui_flutter (no ../ needed)
-        - for multi-project workspaces, project folders sit alongside aiq_core_ folders at root
-        - for single-project workspaces, the project IS the workspace root — repos clone right into it
-
-        :- workspace layout (single project)
-            - workspace_root/
-                - .aiq/
-                - aiq_core_ui_flutter/
-                - aiq_core_auth_flutter/
-                - aiq_core_cloud_flutter/
-                - aiq_core_data_store_flutter/
-                - aiq_core_utils_flutter/
-                - dev_http_inspector/
-                - dev_log_inspector/
-                - dev_app_flavouring/
-                - aiq_playground_snippets/
-                - lib/
-                - pubspec.yaml
-
-        :- workspace layout (multi project)
-            - workspace_root/
-                - aiq_core_ui_flutter/
-                - aiq_core_utils_flutter/
-                - dev_http_inspector/
-                - project_app_one/
-                    - .aiq/
-                    - lib/
-                    - pubspec.yaml  (path: ../aiq_core_ui_flutter)
-                - project_app_two/
-                    - .aiq/
-                    - lib/
-                    - pubspec.yaml  (path: ../aiq_core_ui_flutter)
-
-  :: firebase_studio_workspace
-      - default workspace is firebase studio
-      - space is short, never go above 70% disk usage
-      - when cloning from github in /temp or elsewhere, clean up after immediate requirements are done
-        - especially after tasks that just check out a project to review architecture or coding patterns
-
-
-  :: offline_modes
-  ::= three_distinct_modes, never_confuse_them
-
-      :- offline_first (production behaviour)
-          - every app stores data locally first and syncs to cloud when online
-          - data persists across installs and app restarts
-          - app is fully functional with no internet connection
-          - this is the default for every app unless user explicitly says otherwise
-
-      :- offline_dev_test_mode (dev only — fully stripped at uat and prod)
-          - controlled by `--dart-define=ENV=dev|uat|prod` at build time
-          - kDebugMode is not used — env dart-define is the only build variant flag
-          - String.fromEnvironment is a compile-time constant — if (Env.isOfflineDevTest)
-            blocks are fully dead code at uat/prod and tree-shaken out completely
-          - the env class must look exactly like this in every app, no variations:
-
-              ```dart
-              class Env {
-                  static const String _env = String.fromEnvironment('ENV', defaultValue: 'dev');
-                  static bool get isOfflineDevTest => _env == 'dev';
-                  static bool get isUat => _env == 'uat';
-                  static bool get isProd => _env == 'prod';
-              }
-              ```
-
-          - every service call, repository access, and auth flow must follow this exact pattern:
-
-              ```dart
-              if (Env.isOfflineDevTest) {
-                  // offline test logic — uses OfflineTestDataRepository
-                  // fake service calls appear in dev_http_inspector like real calls
-                  // this entire block is gone at uat/prod
-              } else {
-                  // normal online logic — uses real repository and real backend
-              }
-              ```
-
-          - i want the ability to turn offline_dev_test_mode have the ability to hide and show fully using a boolean variable that can be controlled with ai using project-info.txt - this way i can build a dev build without offline_dev_test_mode 
-          - no other pattern is acceptable — never mix offline logic into online paths
-          - uses json files in test_data/ folder — never touches real backend
-          - fake service calls must appear in dev_http_inspector exactly like real calls
-          - user can log in offline and fully navigate the app as if online
-          - user can switch between multiple mock users cleanly via debug_ui_panel —
-            each switch must feel like a fresh app launch with no state bleed from previous user
-          - OfflineTestDataRepository and the real repository both extend the same base
-            repository class — changes to the interface propagate to both automatically
-
-      :- offline_safe_data_mode (dev only — available only inside offline_dev_test_mode)
-          - uses json files in safe_test_data/ folder instead of test_data/
-          - contains sfw content replacements — for working in public or screen sharing
-          - separate from the nsfw blur/placeholder system which is a runtime user toggle
-          - switching to safe data mode replaces data source only — all app logic stays identical
-          - only available when ENV=dev and isOfflineDevTest is active
-
-
-  :: debug_ui_panel
-      - every app has a debug_ui_panel — this is non-negotiable
-      - reference implementation: project_family_calendar
-      - floating orange icon always visible in dev builds — tapping opens the panel
-      - panel opens as center hover popup on tablet/desktop, full screen on phone
-      - panel is context-aware — available options change based on which screen/section
-        is currently active, not a static global list, this helps keeping the panel from being a large scrollview liste
-      - variant switching: each data category has multiple variants the developer can
-        cycle through in real time to see how a view renders with different data shapes
-      - clear all data button: wipes everything stored on device to simulate fresh install
-      - full_ui_mode: loads pre-configured json files from test_data/full_ui_data/ that
-        fills every section with dense realistic content to stress-test the ui
-      - auto_event_sequencer: if the app has server-driven events, this toggle simulates
-        the server sending responses so the app advances automatically — developer watches
-        the full flow play out in real time without manual tapping
-      - if the app has any map feature, debug_ui_panel always includes origin/destination
-        test points and map state controls
-      - if any dev_ plugins are present, their floating icons sit alongside the orange
-        debug_ui_panel icon — never overlap or hide each other
-      - debug_ui_panel is only present in ENV=dev builds — completely absent in uat/prod
-
-
-  :: provider_abstraction
-      - every app must have an abstraction layer for database, cloud, and payment providers
-      - never write directly against firebase, supabase, stripe, or any provider — always go through the abstraction
-      - switching providers must require zero changes to app logic — only the adapter changes
-      - use aiq_core_cloud_flutter / aiq_core_cloud_react for cloud and database abstraction
-      - use aiq_core_data_store_flutter / aiq_core_data_store_react for local data abstraction
-      - payment provider abstraction is handled within aiq_core_cloud_flutter / aiq_core_cloud_react
-      - mock implementations must exist for every provider interface for offline/dev mode
-
-
-  :: aiq_ecosystem_modularity
-        - all apps must import aiq_core_ repos as git submodules, not copy code                                            
-        - before building any feature, check if it already exists in an aiq_core_ repo
-        - if reusable code is built inside an app, extract it to the appropriate aiq_core_ repo and import it back
-        - project_dev_ plugins are personal dev environment tools — import them as submodules, never copy
-        - reference the current repo list in aiq_credentials.txt for available aiq_core_ and project_dev_ repos
-
-        :- project_dev_baseline (every flutter app, no exceptions)
-            - dev_http_inspector
-            - dev_log_inspector
-            - dev_app_flavouring
-            - add more project_dev_ plugins based on what the app needs from the available repo list
-
-        :- aiq_core_baseline (every flutter app, no exceptions)
-            - aiq_core_ui_flutter
-            - aiq_core_auth_flutter
-            - aiq_core_cloud_flutter
-            - aiq_core_data_store_flutter
-            - aiq_core_utils_flutter
-            - add aiq_core_analytics_flutter and aiq_core_map_flutter only when the app needs them
-
-        :- aiq_core_baseline (every react app, no exceptions)
-            - aiq_core_ui_react
-            - aiq_core_auth_react
-            - aiq_core_cloud_react
-            - aiq_core_data_store_react
-            - aiq_core_utils_react
-            - add aiq_core_analytics_react and aiq_core_map_react only when the app needs them
-
-        :- auto_clone_rules
-            - on project start, check if all baseline aiq_core_ and project_dev_ submodules exist
-            - if any are missing, clone them immediately from github before doing any other work
-            - submodules live in their standard location within the project
-            - before building any new widget, screen, service, or utility — check if it already
-              exists in the relevant aiq_core_ repo and use it instead of writing from scratch
-            - new features built inside an app must use aiq_core_ components wherever possible
-
-        :- update_repos (explicit user request only)
-            - when user requests "update repos" or "extract to aiq_core_":
-            - scan the current app for code that should live in aiq_core_ repos
-            - identify the most complete, production-ready version of each component
-            - extract into the aiq_core_ repo as maximally configurable components — expose
-              every visual property (colors, padding, text styles, sizes, callbacks, builders)
-            - push the updated aiq_core_ repo
-            - scan all repos in the github org for imports of the changed aiq_core_ repo
-            - for each consumer in the workspace: update submodule ref, verify build, fix breakage
-            - switch the current app to import from submodule — delete the local copy
-
-
-  :: claude_md_project_root [BOOTSTRAP_INSTRUCTIONS]
-      - every project must have a CLAUDE.md at root
-      - on launch and on /clear, claude executes in order:
-          1. read .aiq/dev_instructions.txt
-          2. read .aiq/dev_bugs.txt
-          3. read .aiq/dev_current_tasks.txt
-          4. resume from the active phase/step/task automatically
-          5. keep working without stopping to ask permission between tasks, steps, or phases
-      - CLAUDE.md must self-check: if any of these 5 instructions are missing from itself,
-        restore them before doing anything else
-      - claude never asks "should I continue to the next phase?" — it just continues
-      - claude only stops when it hits a genuine blocker it cannot resolve without input
-
-
-  :: snippets_library
-      - clone aiq_playground_snippets from github at root level alongside the project
-      - goal: snippets library must reach a state where ai can generate a complete new app
-        in minutes — every common view, flow, pattern, and logic block already exists as
-        a snippet that just needs to be assembled and configured
-      - on user request, scan the current app for views, logic blocks, and patterns that are
-        either missing from snippets entirely or exist as a weaker variant — push the better
-        version to aiq_playground_snippets
-      - when pushing, prefer the most complete, production-ready variant of each snippet —
-        not the first version that worked, but the one that survived hardening and optimisation
-
-
-  :: user_credentials [.aiq/aiq_credentials.txt]
-      - read gh token from aiq_credentials.txt at session start and configure git credentials once for the whole session
-      - when user provides any token — gh_, firebase hosting, app distribution, vercel — save it to aiq_credentials.txt immediately without being asked
-      - always use tokens from aiq_credentials.txt for all deployments and pushes without prompting the user
-      - tokens are rotated often — never worry about expiry, always use whatever is current in the file
-      - do not build until right before a push — do not run builds constantly during development
-      - commit and push after every completed task, not just at end of a phase
-      - commit format: `[PHASE_ID][TASK_ID]` short description of what changed
-
-      :- deployment_targets
-          - react web: vercel
-          - static web pages: firebase hosting
-          - android: firebase app distribution
-          - flutter web: firebase hosting
-
-      :- github_actions_build_rules
-          - github actions minutes are limited free tier — treat them as a extremely scarce resource
-          - never trigger a build mid-phase or for intermediate commits
-          - build and deploy only when a phase is fully complete or the user's request is fully satisfied
-          - never push a workflow change that triggers unnecessary runs
-
-
-  :: user_deployment_workflow
-      - do not build until the phase is fully complete or the user's request is fully satisfied
-      - do not run builds constantly during development — one build per deployment event only
-
-      :- deployment_targets
-          - react web: vercel
-          - static web pages: firebase hosting
-          - android: firebase app distribution
-          - flutter web: firebase hosting
-
-      :- github_actions_build_rules
-          - github actions minutes are limited free tier — treat them as a scarce resource
-          - never trigger a build mid-phase or for intermediate commits
-          - build and deploy only when a phase is fully complete or the user's request is fully satisfied
-          - never push a workflow change that triggers unnecessary runs
-
-
-  :: error_handling
-      - when an error occurs, do not immediately try to patch it — stop first
-      - trace the error back to the phase and task that introduced it by reading git log and
-        the relevant phase/step/task context in dev_plan.txt
-      - re-read the original plan_info and step_info for that phase to understand what was
-        being solved and why — do not fix in isolation without that context
-      - only after understanding the origin is the ai allowed to attempt a fix
-      - the fix must be consistent with the original goal of that phase, not just make the
-        error disappear
-      - if the error was introduced in a previous phase that is already marked done, flag it
-        to the user before touching anything — do not silently reopen closed work
-
-
-  :: plan_format
-      plan -> phase -> step -> task
-
-      :- plan rules
-          - one user request = one plan
-          - groups all phases needed to satisfy the request end to end
-          - no info variable — plan is the top level container
-
-      :- phase rules
-          - one focused area of work within a plan
-          - runs in order, 3 passes before done
-          - max 4 steps per phase — if more are needed, create a _b phase for overflow
-          - if a phase touches more than 20 files or exceeds 60 minutes, split it
-          - phase_info: 4 to 5 paragraphs — a cold agent reading only this block must fully
-            understand the user's original request, what has been built so far, what this
-            phase delivers, and what done looks like — user context must never be compressed
-            or lost across a sequence of phases
-
-      :- step rules
-          - every step line in dev_plan.txt, dev_overall_tasks.txt, and dev_current_tasks.txt                            
-                must carry 2-4 sentences of inline detail — never just a short label like
-                "single-field settings forms" — the step line itself must describe what files
-                are touched, what pattern is being applied, and how many items are in scope
-
-          - logical grouping of tasks within a phase
-          - max 8 tasks per step
-          - step_info: must cover the exact current code state, what this step changes, and
-            why — not a one-liner, enough substance that intent is unambiguous
-
-      :- task rules
-          - every task in dev_overall_tasks.txt and dev_current_tasks.txt must carry the same
-              2-4 sentence detail from dev_plan.txt — never abbreviate to one-liners like
-              "X → Y" when copying tasks between files
-          - single unit of work, bottom level, no info variable
-          - never a one-liner — must have enough inline detail that output would not be
-            garbage if the agent had only that task to read
-          - vague tasks like "improve performance" or "fix auth" are not allowed
-          - if context is lost and output would be garbage, the task is written wrong
-
-          :- task_formatting                                                                                                                 
-            - each task is a dash line with a short readable label (5-10 words max)                                                        
-            - detail goes below as indented dash items, one point per line                                                                 
-            - never cram all detail into a single long line or paragraph blob                                                              
-            - each dash item is one clear statement about what to do or what context matters                                               
-            
-            - example:                                                                                                                     
-                - [ ] extract analytics service into shared repo                                                                           
-                    - compare analytics_service.dart across all 4 apps (hearts 27, livemate 29, lust 28, showgirls 30)
-                    - find the most complete version with event buffering, crash reporting, A/B testing, funnel analysis                   
-                    - extract into aiq_core_analytics_flutter with generalized event types                                                 
-                    - remove all hardcoded app-specific event names                                                                        
-                    - depends on aiq_core_cloud_flutter for CloudAnalytics interface      
-
-      :- archiving rules
-          - when copying completed phases/steps/tasks to dev_plan_all_archive.txt, copy
-            the full original block exactly as written — never summarize, compress, rewrite,
-            or drop any field
-
-      :- numbering_rules
-          - use single digits: phase_1, step_1, task_1 — never zero-pad (not phase_001)                                                  
-            - plan numbering follows the same rule: plan_1, plan_2                                                                         
-            - phases: global counter (phase_1 through phase_77 etc)                                                                        
-            - steps groups: restart at 1 per phase (steps_1, steps_2 within each phase)                                                    
-            - task groups: global cumulative counter across the entire project, never reset per step or phase                              
-                - every task group across every phase gets the next number: tasks_1, tasks_2, tasks_3...
-                - one phase can have many task groups — each one increments the counter                                                  
-                - the highest tasks_N must always be greater than the highest phase_N — if it is not, the count is wrong                 
-                - ai must find the highest tasks_N in dev_overall_tasks.txt and dev_plan_all_archive.txt and dev_plan.txt files before creating any new task group                                    
-                - never batch old content into a single tasks_1 — every group ever created gets its own unique number  
-                
-
-      :- sub_numbering
-            - steps have no sub-numbering — they are plain step_# numerical items that increment by 1 every step
-                - never use step_1.1, step_1.2 — just sequential `step_# [x] label` lines under the steps_N group
-                    - use step_1, step_2, step_3
-
-            - individual tasks within a tasks_N group get prefixed task_N.M
-              - tasks_5 [opus_4_6]
-                  - task_5.1 [ ] task_title
-                    - task description item line explaining task pieces in detail
-                    - task description item line explaining task pieces in detail
-                    - task description item line explaining task pieces in detail    
-                  - task_5.2 [ ] task_title
-                    - task description item line explaining task pieces in detail
-                    - task description item line explaining task pieces in detail
-                    - task description item line explaining task pieces in detail    
-            - M resets to 1 within each task group
-            - the [ ] marker goes after the sub-number, before the label                    
-      
-      :- tag_placement
-        - ::= tags must be indented 4 spaces under their parent :: heading, never at the same indent level
-        - example:
-            :: phase_1 [DONE]
-                ::= auth_and_data_layer
-
-        :- markers  
-            - [ ] unchecked — not started or in progress
-            - [x] checked — completed, never unchecked once marked      
-            - model tags: [opus_4_6], [sonnet_4_6], [haiku_4_5] — appended to any phase, step, or task line
-              - if no model tag is present, opus_4_6 is assumed                                                                   
-            - phases use pass tracking: phase_1 [x : 3/3] means done, phase_1 [1/3] means pass 1 complete
-            - steps groups use check marker: steps_1 [x] means done, steps_1 [ ] means in progress                                         
-            - individual steps use check marker: [x] done, [ ] not done                                                                    
-            - task groups use check marker: tasks_1 [x] means done, tasks_1 [ ] means in progress                                          
-            - individual tasks use check marker: [x] done, [ ] not done                                                                    
-            - [x : 3/3] is the only way a phase is considered fully complete                                                               
-            - never use [DONE] — always use the pass or check marker format                                                                
-            - every task in dev_plan.txt, dev_overall_tasks.txt, and dev_current_tasks.txt uses these markers                              
-            - when a task completes, mark [x] in dev_current_tasks.txt first, then propagate to dev_overall_tasks.txt and dev_plan.txt     
-            - dev_plan_all_archive.txt receives completed blocks exactly as they appear after marking — all [x]                            
-            - ai must mark [x] immediately upon completing a task, not in batches                                                          
-            - never uncheck a [x] task — if work needs to be redone, create a new task 
-            - model tags: [opus_4_6], [sonnet_4_6], [haiku_4_5] — appended to task group lines only
-                - format: tasks_1 [opus_4_6] or tasks_1 [sonnet_4_6] — model goes right after the group name
-                - if no model tag is present on a task group, opus_4_6 is assumed
-                - never put model tags on individual tasks, steps, or phases — only on task groups
-                - all tasks within a task group inherit the model from their group line
-
-      :- info_formatting
-            - minimize blank lines — one blank line between sections only, never double blank lines                                        
-            - no blank line between a step label and its indented dash items                                                               
-            - no blank line between a task label and its indented dash items                                                               
-            - blank lines only between steps groups, between individual phases, and after info blocks                                                                                                                     
-            - phase_info and step_info use a dash prefix: :- phase_info, :- step_info
-            - a blank line must follow the info block before the next section begins                                                       
-            - each steps group contains multiple individual steps                                                                          
-            - each step contains task groups, each task group contains multiple tasks                                                      
-            - example:                                                                                                                     
-     
-                :: phase_1 [1/3]   // this is a single phase, not a group                                                                                                      
-                    ::= auth_and_data_layer                         
-
-                    :- phase_info
-                        implement the core authentication and data layer...
-                                                                                                                                           
-                    :- steps_1 [x]      // this is a single group of steps, multiple steps exist inside it, and multiple tasks groups exist for each step.
-                        - steps_overall_description: over all description what this set of steps are supposed to try to solve.                                                                                                     
-                        
-                        :- step_1
-
-                          - step_info: what is this step trying to solve using these tasks
-
-                              :- tasks_1 [x]       // this is a group of tasks  and a single step can have multiple tasks groups                                                                                          
-                                  task_1.1 - [x] task_title
-                                    - task description item line explaining task pieces in detail
-                                    - task description item line explaining task pieces in detail
-                                    - task description item line explaining task pieces in detail    
-                                  task_1.2 - [x] task_title                                                                
-                                    - task description item line explaining task pieces in detail
-                                    - task description item line explaining task pieces in detail
-                                    - task description item line explaining task pieces in detail                                      
-                                  task_1.3 - [x] task_title  
-                                    - task description item line explaining task pieces in detail
-                                    - task description item line explaining task pieces in detail
-                                    - task description item line explaining task pieces in detail    
-
-                          - [x] StorageService with FlutterSecureStorage                                                                     
-       
-                              :- tasks_2 [x]                                                                                                 
-                                  task_2.1 - [x] task_title
-                                    - task description item line explaining task pieces in detail
-                                    - task description item line explaining task pieces in detail
-                                    - task description item line explaining task pieces in detail    
-                                  task_2.2 - [x] task_title       
-                                    - task description item line explaining task pieces in detail
-                                    - task description item line explaining task pieces in detail
-                                    - task description item line explaining task pieces in detail    
-                              :- tasks_3 [x]                                                                                                 
-                                  task_3.1 - [x] task_title 
-                                    - line (215): other sentence that describes task what to do, add line number only if that sentence requires it. not about HOW, more about what needs to be done
-                                    - line (112): other sentence that describes task
-                                  task_3.2 - [x] task_title 
-                                    - task description item line explaining task pieces in detail
-                                    - task description item line explaining task pieces in detail
-                                    - task description item line explaining task pieces in detail                                                                       
-                                                                    
-                    :- steps_2 [ ]                                                                                                         
-                                                                    
-                        - steps_overall_description: over all description what this set of steps are supposed to try to solve.                                                                                                     
-                        
-                        :- step_1
-
-                          - step_info: what is this step trying to solve using these tasks                                                
-
-                                :- tasks_4 [ ] - task_title                                                                                                
-                                    - task description item line explaining task pieces in detail
-                                    - task description item line explaining task pieces in detail
-                                    - task description item line explaining task pieces in detail    
-                                                                                                                                           
-
-  :: multi_app_workspace                                                                                                                 
-    ::= app_sections, per_app_isolation                                                                                                  
-                                                                                                                                           
-        :- app_section_format                                                                                                              
-            - in multi-project workspaces, dev_plan.txt, dev_plan_all_archive.txt,
-              dev_overall_tasks.txt, and dev_current_tasks.txt are grouped by app
-            - top level marker: [app: app_name] (e.g., [app: project_hearts])
-            - use [app: shared] for cross-app work (aiq_core_, dev_ plugins, workspace-level)
-            - each [app: app_name] section is completely independent from all other app sections
-            - ai must never mix content from one app section into another
-            - reading one app section must give full context without needing other sections
-
-        :- per_app_numbering
-            - every counter is per app — phases, steps, task groups all scoped to [app: app_name]
-            - each app starts at tasks_1 and increments sequentially (tasks_1, tasks_2, ... tasks_77, tasks_200)
-            - phase numbers also start at phase_1 per app
-            - [app: shared] has its own independent counters starting at 1
-            - no number is shared or coordinated across apps
-            - prompt_counter remains single global counter (not per app)
-
-        :- per_app_tracking
-            - dev_current_tasks.txt has one [app: app_name] block per active app
-            - only apps with active work appear in dev_current_tasks.txt
-            - dev_plan.txt has all apps, each under their own [app: app_name] heading
-            - dev_overall_tasks.txt mirrors dev_plan.txt structure per app
-            - dev_plan_all_archive.txt archives per app, never merge across apps
-
-
-  :: phase_execution
-      - in dev_plan all phases must be completed one after another
-      - do not start a new phase until the current one is completed
-      - work phase by phase, step by step, task by task
-      - 3 passes required per phase before marking done, passes are not repetitions:
-          - pass_1: implement and get it working in offline/demo mode
-          - pass_2: harden — security, edge cases, type errors, no debug leaks
-          - pass_3: optimize — bundle, lazy loading, memory, no regressions
-      - each pass is distinct work with its own commit tagged [PASS1] [PASS2] [PASS3]
-
-
-  :: recurring_phases
-      - these are full phases with 3-pass requirement, not quick sweeps
-      - they recur at intervals and get their own phase re inserted into dev_plans automatically
-          - remove_comments     every 5 phases    [FAST]
-          - security_audit      every 10 phases   [OPUS]
-          - performance_audit   every 10 phases   [SONNET]
-          - architecture_mod    every 15 phases   [OPUS]
-
-
-
-
-  :: repositories
-    ::= launchable_apps, services, hardware, all_private_unless_noted                                                      
-    ::= all apps use provider abstraction — datastore, cloud, payments, auth swappable
-
-    :- personal_apps
-        - project_family_calendar
-            - flutter, firebase
-            - family life organizer — scheduling, chores, meals, routines, rewards, photos, recipes, reminders, smart
-    display mode for kitchen/tv
-
-        - project_coffee_flutter
-            - flutter
-            - mCAD — mobile computer-aided dispatch for emergency services, incident management, unit dispatch/tracking,
-    patient records, grid locations, route mapping, real-time comments, shift management
-
-        - project_personal_finances
-            - flutter, getx, dio
-            - personal finance — bill tracking, credit card management, personal tax (cra), corporate tax, ai assistant,
-    document collection, budget planning, canada-specific (hst, provincial brackets)
-
-        - project_portfolio_react
-            - react
-            - personal portfolio site — 7 themes (dark hacker, cyberpunk, sunset, etc), space invaders mini-game,
-    responsive
-
-        - project_fitforge
-            - flutter, getx, dio
-            - workout tracker — 500+ exercise library, custom builder, rep/set tracking, rest timers, PRs, progressive
-    overload, workout templates (ppl, 5x5, phul), plate calculator, ai suggestions, apple health/google fit
-
-        - project_zenmind
-            - flutter, getx, dio
-            - meditation and mindfulness — guided library, breathing exercises (box, 4-7-8, wim hof), ambient sounds mixer,
-     sleep stories, body scans, walking meditations, mood journal, streak tracking, ai-personalized sessions, pomodoro
-    focus timer
-
-        - project_awesomequotes
-            - android
-            - quotes app — daily quotes and collections
-
-        - project_sudoku
-            - flutter
-            - sudoku puzzle game
-
-        - project_browser
-            - javascript, browser extension
-            - brave extension — custom picture-in-picture player with gesture controls
-
-        - project_musicone
-            - flutter, getx
-            - music player — local and streaming playback, playlist management, audio equalizer with presets, music
-    discovery and recommendations
-
-    :- food_and_commerce
-        - project_aiq_food_client
-            - flutter, supabase
-            - tinis treats — bakery e-commerce, ordering, delivery
-
-        - project_bakery_direct
-            - flutter, getx, dio
-            - independent bakery platform — storefront, cart, checkout, delivery zones, shipping (canada post, ups),
-    ingredient/finished goods inventory with expiry, recipe management with batch scaling, custom cake order form,
-    subscription boxes (bread club, pastry box), loyalty rewards, kitchen display queue, catering module,
-    allergen/nutrition labels, sales and waste reporting
-
-    :- adult_and_social
-        - project_aiq_tubehub_one
-            - flutter, 7 pillars
-            - porn aggregator — scraper-based content indexing, never hosts content, 7 independent content pillars
-
-        - project_hearts
-            - flutter
-            - tinder clone — dating app, domain hearts.ca
-
-        - project_showgirls
-            - multi
-            - onlyfans clone — creator content platform, subscriptions, payouts, domain showgirls.ca
-
-        - project_livemate
-            - multi
-            - online cam modelling platform, live streaming, tipping, domain livemate.ca
-
-        - project_lust
-            - multi
-            - grindr clone — dating/social app, domain realbender.ca
-
-    :- finance_and_trading
-        - project_prism
-            - flutter, getx, dio, websocket
-            - ai-powered trading — real-time candlestick charts with technical indicators, order book with live bids/asks,
-    market/limit orders, portfolio p&l, ai assistant via cortex agents, price alerts
-
-        - project_savvy
-            - flutter, getx, dio
-            - personal banking — financial services, accounts, transactions, budgeting
-
-        - project_equitex
-            - multi
-            - financial trading and investment platform
-
-        - project_vault
-            - flutter, getx, web3dart, dio
-            - crypto wallet and nft gallery — multi-chain (eth, polygon, sepolia), token balances with price tracking, nft
-    gallery with metadata, send/receive with qr, token swap, aiq token and nft integration
-
-        - project_purse
-            - multi
-            - payments api platform — domain securepurse.ca, brand purse secure api
-
-        - project_mobius
-            - multi
-            - vaultie.io clone — personal finance vault, secure document storage, brand mobius guard
-
-        - project_sphere
-            - multi (react, flutter, aws, terraform)
-            - spherefinancial — full platform with web frontend, mobile apps, cloud infrastructure, ci/cd pipelines
-
-        - project_trading_engine_api
-            - node.js, express, websocket
-            - order matching engine — price-time priority, market + limit orders, partial fills, risk manager (position
-    sizing limits, max order value), real-time trade feed via websocket
-
-        - project_market_data_api
-            - node.js, express, websocket, coingecko
-            - market data service — real-time prices, ohlcv candles (1m/5m/15m/1h/4h/1d), technical indicators (rsi, macd,
-    sma, ema, bollinger bands), websocket price streaming with subscribe/unsubscribe
-
-        - project_payment_gateway_api
-            - node.js, express
-            - cross-border payment gateway — oauth2 token auth, party onboarding with kyc and documents, account management
-     with statements, payout/payin processing, fx spot rates/quotes/deal booking, reference data (countries, currencies,
-    banks)
-
-        - project_cortex
-            - node.js, websocket
-            - ai trading intelligence — 4 agents: sentinel (market watcher), oracle (technical/fundamental analysis),
-    guardian (risk/position sizing), velocity (auto execution), claude + gpt providers, real-time signal streaming via
-    websocket
-
-        - project_blockchain_contracts
-            - solidity, hardhat
-            - smart contracts — aiq erc-20 token (1b max supply), erc-721 nft (10k max, 0.01 eth mint), nft marketplace
-    (2.5% platform fee), deploys to sepolia testnet + polygon mainnet
-
-        - project_token_nft_factory
-            - node.js, solidity
-            - cli toolkit — rapid erc-20 token and erc-721/1155 nft collection launcher, scaffolds full project from
-    templates
-
-        - project_pump_robot
-            - flutter, getx, dio, websocket
-            - rapid trading bot — multi-exchange (binance, coinbase, kucoin, kraken, bybit), live scanner (top movers,
-    volume spikes, new listings), auto buy/sell with kelly criterion sizing, trailing stops and take-profit tiers, cortex
-    ai sentiment and whale tracking, backtesting engine, telegram/discord alerts
-
-    :- betting
-        - project_pokershark
-            - flutter, getx
-            - poker strategy — monte carlo equity calculator against ranges, session tracker with p&l/bb-hr/vpip/pfr, 13x13
-     preflop charts by position (6-max, 9-max), icm calculator for tournaments, hand review/replay with notes, push/fold
-    calculator
-
-        - project_raceedge
-            - flutter, getx
-            - horse racing and greyhound — race cards with runner details/odds/jockey/trainer, form analysis with last-5
-    visualization and speed ratings, exotic bet builder (exacta, trifecta, quinella) with pool calculations, track
-    conditions, ai form analysis
-
-        - project_betbrain
-            - flutter, getx
-            - ai sports betting — odds comparison across 10+ bookmakers with line movement, ai predictions with
-    confidence/ev/reasoning, live scores with minute tracking, single/parlay/teaser bets, p&l with roi, covers
-    nfl/nba/mlb/nhl/soccer/mma/tennis/boxing/golf/f1
-
-        - project_cryptowager
-            - flutter, getx, web3dart
-            - crypto prediction betting — price movement bets (up/down/exact/range), defi yield predictions, nft floor
-    price bets, on-chain settlement via smart contract escrow, peer-to-peer wager matching, ai price prediction models,
-    bankroll management
-
-        - project_propbets
-            - flutter, getx
-            - proposition and prediction markets — polymarket/kalshi integration, custom prop bet creation, categories
-    (politics, sports, crypto, entertainment, weather), portfolio for open positions, ai probability estimator from news +
-    data, market maker mode
-
-        - project_arbibot
-            - flutter, getx, websocket
-            - arbitrage detection — cross-bookmaker and cross-exchange scanner, sure-bet calculator (guaranteed profit from
-     odds differences), multi-leg arb (3-way, 4-way), auto bet placement with rapid execution, push alerts on threshold,
-    risk assessment per opportunity (liquidity, limits, timing)
-
-    :- security_and_networking
-        - project_aiq_hacking_one
-            - flutter, dart server
-            - aiq guardian — security plugin suite monorepo, packages: guardian_core (security scanner, threat analyzer,
-    auth, storage, infra), guardian_plugin, guardian_ui, cloud_provider abstraction (firebase impl), dart backend server
-
-        - project_aiq_networking_one
-            - flutter, rust (public)
-            - 3-project mono — aiq_server (dns, vpn, proxy, firewall, gateway, ca, security ops, intel, monitoring),
-    aiq_flutter_plugin (one dependency = all networking/security features), aiq_common (shared models, protocols, configs)
-
-    :- infrastructure_and_services
-        - project_api_gateway
-            - rust
-            - centralized api routing, rate limiting, request forwarding for ecosystem
-
-        - project_config_api
-            - rust
-            - feature flags, version blocking, kill switches — centralized config for all apps
-
-        - project_auth_service
-            - rust
-            - shared auth — oauth2, jwt issuance and validation across ecosystem
-
-        - project_notification_service
-            - rust
-            - notification dispatch — push, email, sms for all apps
-
-        - project_aiq_audit_one
-            - flutter
-            - rf scanner and device tracker — wifi scanning, ble scanning, classic bluetooth, hackrf ffi integration, sdr#
-    tcp client, dsp engine (demodulator, signal classifier, spectrum analyzer), location tracking, background sync
-
-    :- cannabis
-        - project_pandaweed
-            - flutter, getx, dio, google maps
-            - leafly/weedmaps clone — dispensary listings with map/directions/hours/menus/ratings, strain database with
-    thc/cbd/terpenes/effects/reviews, geo-restricted (full cannabis in legal countries, accessories-only elsewhere),
-    turn-by-turn delivery, community board, weekly newsletters, cart and ordering
-
-    :- aiq_ecosystem
-        - project_aiq_hub_one
-            - flutter (public)
-            - cross-platform system inspection hub — dashboard, ai agents, ai vision, bluetooth audit, wifi audit, gps,
-    kernel info, net inspector, security audit, sensors, system info, app inspector, tools hub, operations, productivity,
-    utilities
-
-        - project_aiq_core_ui
-            - flutter
-            - shared theme, widgets, plugin contract — base ui layer consumed by all aiq flutter apps
-
-        - project_aiq_radio_one
-            - flutter
-            - sdr/rf toolkit — spectrum viewer, waterfall display, fft engine, audio demodulation, device support (rtl-sdr
-    via tcp, hackrf, evil crow rf, wifi pineapple), bluetooth le scanner, wifi analyzer, collection logging, oui lookup
-
-    :- hardware
-        - project_mems_array
-            - embedded, pcb
-            - mems microphone beamforming array — dense mems mic array for long-range audio beamforming and acoustic
-    focusing, directional listening, audio "pockets" (focused sound zones), noise rejection via digital beamforming dsp,
-    modules: mems_array_ctrl + N x mems_mic_ch, powered by shared power_supply or usb
-
-        - project_antennas
-            - embedded, pcb
-            - modular phased array antenna system — 700mhz to 6+ ghz, directional boards for beamforming
-    (900/1500/2400/5800mhz beam), omnidirectional boards for area monitoring (900/1500/2400/5800mhz omni), central
-    beamforming controller (ant_ctrl), modes: long-range targeted beamforming, short-range area-of-effect (apartment
-    scale), directional beam (few hundred feet), wide-area omnidirectional monitoring, requires external sdr (hackrf,
-    rtl-sdr, wifi pineapple)
-
-        - project_laser_array
-            - embedded, pcb
-            - modular laser diode array — up to 8 independently controlled channels, variable current drive, pwm dimming,
-    safety interlocks, modules: laser_array_ctrl + N x laser_driver_ch + laser diodes, powered by shared power_supply
-
-        - project_power_supply
-            - embedded, pcb
-            - universal modular variable psu — ac mains (120v/60hz) to regulated dc, shared dependency for all hardware
-    projects, profiles: small (5w usb 5v/1a for controllers and mems), medium (30w 12-15vdc/2a for laser and antenna ctrl),
-     large (100w+ 12-48vdc/5a+ for high-power arrays), modules: psu_ac_input + psu_dc_converter (small/medium/large
-    variants)
-
-    :- mechanic
-        - project_mechanic_shop
-            - flutter, getx, dio
-            - auto shop management — work orders with status tracking (draft to invoiced), appointment scheduling with
-    sms/email reminders, invoice generation from work orders with payment recording, parts inventory with stock
-    levels/reorder alerts/supplier tracking, employee management with roles/certs/ratings, vehicle history and service
-    timeline, service catalog with labor rates and parts estimation, multi-payment (credit, cash, check, e-transfer),
-    technician job tracking and performance metrics
-
-    :- dev_shared
-        - project_flutter_dev_tools
-            - flutter
-            - shared dev tool packages — http inspector, log inspector, file explorer, terminal, toolkit, app flavouring,
-    used as git submodules across all flutter apps
-
-
-
-
-  :: project_info
-        
-    [template_file :— project root folder]                                                        
-      - project: {name}                                                                                                  
-      - description: {5-10 sentences} // sentences use app features to describe it                                                                                     
-      - github: https://github.com/aiq-dev-alpha/{repo_name}                                                             
-      - android_id: aiq.io.{category}.{name}.app                                                                         
-      - category: {software:personal | software:business | software:betting | software:finance | etc}     
-
-    :- aiq_project_configs      [user-maintain-configurations-section]     
-      - user can enter configs here such as currently by default build variant is set to :dev
-        - this means when the build happens ai can actually change the boolean value for isDev, isUat, isPrd and based on the build we can show dev_tools
-
-
-    :- critical_config 
-      - {pinned deps, env flags, offline mode, region restrictions, version blocking, kill switches}    
-
-    :- stack
-      - framework: {flutter | react | rust | multi}
-      - state: {riverpod | getx | zustand | etc}
-      - navigation: {manual | gorouter | getx_named | react_router | etc}
-      - http: {dio | http | fetch | etc}
-      - workspace: {yes with member list | no}
-
-    :- platform_variants
-      - {list each entry point and what platform it targets}
-
-    :- provider_abstraction
-      - auth: {current impl} — swappable to {alternatives}
-      - database: {current impl} — swappable to {alternatives}
-      - storage: {current impl} — swappable to {alternatives}
-      - payments: {current impl} — swappable to {alternatives}
-      - push: {current impl} — swappable to {alternatives}
-      - analytics: {current impl} — swappable to {alternatives}
-      - mock: {yes full | partial | none}
-
-    :- features
-      :- feature categorie[s]
-        - [feature heading]     // simple easy to understand few words 
-            - {feature with enough detail to understand scope}
-            {2-3 line per feature fully explaining it}
-
-    :- dev_tools
-      - {list submodule plugins present}
-
-
-    :- status
-      - {current phase and progress}
+          - add aiq_core_analytics_react and aiq_core_map_react only when the app needs them
+
+      :- auto_clone_rules
+          - on project start, check if all baseline aiq_core_ and project_dev_ submodules exist
+          - if any are missing, clone them immediately from github before doing any other work
+          - submodules live in their standard location within the project
+          - before building any new widget, screen, service, or utility — check if it already
+            exists in the relevant aiq_core_ repo and use it instead of writing from scratch
+          - new features built inside an app must use aiq_core_ components wherever possible
+
+      :- update_repos (explicit user request only)
+          - when user requests "update repos" or "extract to aiq_core_":
+          - scan the current app for code that should live in aiq_core_ repos
+          - identify the most complete, production-ready version of each component
+          - extract into the aiq_core_ repo as maximally configurable components — expose
+            every visual property (colors, padding, text styles, sizes, callbacks, builders)
+          - push the updated aiq_core_ repo
+          - scan all repos in the github org for imports of the changed aiq_core_ repo
+          - for each consumer in the workspace: update submodule ref, verify build, fix breakage
+          - switch the current app to import from submodule — delete the local copy
+
+
+:: claude_md_project_root [BOOTSTRAP_INSTRUCTIONS]
+    - every project must have a CLAUDE.md at root
+    - on launch and on /clear, claude executes in order:
+        1. read .aiq/dev_instructions.txt
+        2. read .aiq/dev_bugs.txt
+        3. read .aiq/dev_current_tasks.txt
+        4. resume from the active phase/step/task automatically
+        5. keep working without stopping to ask permission between tasks, steps, or phases
+    - CLAUDE.md must self-check: if any of these 5 instructions are missing from itself,
+      restore them before doing anything else
+    - claude never asks "should I continue to the next phase?" — it just continues
+    - claude only stops when it hits a genuine blocker it cannot resolve without input
+
+
+:: snippets_library
+    - clone aiq_playground_snippets from github at root level alongside the project
+    - goal: snippets library must reach a state where ai can generate a complete new app
+      in minutes — every common view, flow, pattern, and logic block already exists as
+      a snippet that just needs to be assembled and configured
+    - on user request, scan the current app for views, logic blocks, and patterns that are
+      either missing from snippets entirely or exist as a weaker variant — push the better
+      version to aiq_playground_snippets
+    - when pushing, prefer the most complete, production-ready variant of each snippet —
+      not the first version that worked, but the one that survived hardening and optimisation
+
+
+:: user_credentials [.aiq/aiq_credentials.txt]
+    - read gh token from aiq_credentials.txt at session start and configure git credentials once for the whole session
+    - when user provides any token — gh_, firebase hosting, app distribution, vercel — save it to aiq_credentials.txt immediately without being asked
+    - always use tokens from aiq_credentials.txt for all deployments and pushes without prompting the user
+    - tokens are rotated often — never worry about expiry, always use whatever is current in the file
+    - do not build until right before a push — do not run builds constantly during development
+    - commit and push after every completed task, not just at end of a phase
+    - commit format: `[PHASE_ID][TASK_ID]` short description of what changed
+
+    :- deployment_targets
+        - react web: vercel
+        - static web pages: firebase hosting
+        - android: firebase app distribution
+        - flutter web: firebase hosting
+
+    :- github_actions_build_rules
+        - github actions minutes are limited free tier — treat them as a extremely scarce resource
+        - never trigger a build mid-phase or for intermediate commits
+        - build and deploy only when a phase is fully complete or the user's request is fully satisfied
+        - never push a workflow change that triggers unnecessary runs
+
+
+:: user_deployment_workflow
+    - do not build until the phase is fully complete or the user's request is fully satisfied
+    - do not run builds constantly during development — one build per deployment event only
+
+    :- deployment_targets
+        - react web: vercel
+        - static web pages: firebase hosting
+        - android: firebase app distribution
+        - flutter web: firebase hosting
+
+    :- github_actions_build_rules
+        - github actions minutes are limited free tier — treat them as a scarce resource
+        - never trigger a build mid-phase or for intermediate commits
+        - build and deploy only when a phase is fully complete or the user's request is fully satisfied
+        - never push a workflow change that triggers unnecessary runs
+
+
+:: error_handling
+    - when an error occurs, do not immediately try to patch it — stop first
+    - trace the error back to the phase and task that introduced it by reading git log and
+      the relevant phase/step/task context in dev_plan.txt
+    - re-read the original plan_info and step_info for that phase to understand what was
+      being solved and why — do not fix in isolation without that context
+    - only after understanding the origin is the ai allowed to attempt a fix
+    - the fix must be consistent with the original goal of that phase, not just make the
+      error disappear
+    - if the error was introduced in a previous phase that is already marked done, flag it
+      to the user before touching anything — do not silently reopen closed work
+
+
+:: plan_format
+    plan -> phase -> step -> task
+
+    :- plan rules
+        - one user request = one plan
+        - groups all phases needed to satisfy the request end to end
+        - no info variable — plan is the top level container
+
+    :- phase rules
+        - one focused area of work within a plan
+        - runs in order, 3 passes before done
+        - max 4 steps per phase — if more are needed, create a _b phase for overflow
+        - if a phase touches more than 20 files or exceeds 60 minutes, split it
+        - phase_info: 4 to 5 paragraphs — a cold agent reading only this block must fully
+          understand the user's original request, what has been built so far, what this
+          phase delivers, and what done looks like — user context must never be compressed
+          or lost across a sequence of phases
+
+    :- step rules
+        - every step line in dev_plan.txt, dev_overall_tasks.txt, and dev_current_tasks.txt
+              must carry 2-4 sentences of inline detail — never just a short label like
+              "single-field settings forms" — the step line itself must describe what files
+              are touched, what pattern is being applied, and how many items are in scope
+
+        - logical grouping of tasks within a phase
+        - max 8 tasks per step
+        - step_info: must cover the exact current code state, what this step changes, and
+          why — not a one-liner, enough substance that intent is unambiguous
+
+    :- task rules
+        - every task in dev_overall_tasks.txt and dev_current_tasks.txt must carry the same
+            2-4 sentence detail from dev_plan.txt — never abbreviate to one-liners like
+            "X → Y" when copying tasks between files
+        - single unit of work, bottom level, no info variable
+        - never a one-liner — must have enough inline detail that output would not be
+          garbage if the agent had only that task to read
+        - vague tasks like "improve performance" or "fix auth" are not allowed
+        - if context is lost and output would be garbage, the task is written wrong
+
+        :- task_formatting
+          - each task is a dash line with a short readable label (5-10 words max)
+          - detail goes below as indented dash items, one point per line
+          - never cram all detail into a single long line or paragraph blob
+          - each dash item is one clear statement about what to do or what context matters
+
+          - example:
+              - [ ] extract analytics service into shared repo
+                  - compare analytics_service.dart across all 4 apps (hearts 27, livemate 29, lust 28, showgirls 30)
+                  - find the most complete version with event buffering, crash reporting, A/B testing, funnel analysis
+                  - extract into aiq_core_analytics_flutter with generalized event types
+                  - remove all hardcoded app-specific event names
+                  - depends on aiq_core_cloud_flutter for CloudAnalytics interface
+
+    :- archiving rules
+        - when copying completed phases/steps/tasks to dev_plan_all_archive.txt, copy
+          the full original block exactly as written — never summarize, compress, rewrite,
+          or drop any field
+
+    :- numbering_rules
+        - use single digits: phase_1, step_1, task_1 — never zero-pad (not phase_001)
+          - plan numbering follows the same rule: plan_1, plan_2
+          - phases: global counter (phase_1 through phase_77 etc)
+          - steps groups: restart at 1 per phase (steps_1, steps_2 within each phase)
+          - task groups: global cumulative counter across the entire project, never reset per step or phase
+              - every task group across every phase gets the next number: tasks_1, tasks_2, tasks_3...
+              - one phase can have many task groups — each one increments the counter
+              - the highest tasks_N must always be greater than the highest phase_N — if it is not, the count is wrong
+              - ai must find the highest tasks_N in dev_overall_tasks.txt and dev_plan_all_archive.txt and dev_plan.txt files before creating any new task group
+              - never batch old content into a single tasks_1 — every group ever created gets its own unique number
+
+
+    :- sub_numbering
+          - steps have no sub-numbering — they are plain step_# numerical items that increment by 1 every step
+              - never use step_1.1, step_1.2 — just sequential `step_# [x] label` lines under the steps_N group
+                  - use step_1, step_2, step_3
+
+          - individual tasks within a tasks_N group get prefixed task_N.M
+            - tasks_5 [opus_4_6]
+                - task_5.1 [ ] task_title
+                  - task description item line explaining task pieces in detail
+                  - task description item line explaining task pieces in detail
+                  - task description item line explaining task pieces in detail
+                - task_5.2 [ ] task_title
+                  - task description item line explaining task pieces in detail
+                  - task description item line explaining task pieces in detail
+                  - task description item line explaining task pieces in detail
+          - M resets to 1 within each task group
+          - the [ ] marker goes after the sub-number, before the label
+
+    :- tag_placement
+      - ::= tags must be indented 4 spaces under their parent :: heading, never at the same indent level
+      - example:
+          :: phase_1 [DONE]
+              ::= auth_and_data_layer
+
+      :- markers
+          - [ ] unchecked — not started or in progress
+          - [x] checked — completed, never unchecked once marked
+          - model tags: [opus_4_6], [sonnet_4_6], [haiku_4_5] — appended to any phase, step, or task line
+            - if no model tag is present, opus_4_6 is assumed
+          - phases use pass tracking: phase_1 [x : 3/3] means done, phase_1 [1/3] means pass 1 complete
+          - steps groups use check marker: steps_1 [x] means done, steps_1 [ ] means in progress
+          - individual steps use check marker: [x] done, [ ] not done
+          - task groups use check marker: tasks_1 [x] means done, tasks_1 [ ] means in progress
+          - individual tasks use check marker: [x] done, [ ] not done
+          - [x : 3/3] is the only way a phase is considered fully complete
+          - never use [DONE] — always use the pass or check marker format
+          - every task in dev_plan.txt, dev_overall_tasks.txt, and dev_current_tasks.txt uses these markers
+          - when a task completes, mark [x] in dev_current_tasks.txt first, then propagate to dev_overall_tasks.txt and dev_plan.txt
+          - dev_plan_all_archive.txt receives completed blocks exactly as they appear after marking — all [x]
+          - ai must mark [x] immediately upon completing a task, not in batches
+          - never uncheck a [x] task — if work needs to be redone, create a new task
+          - model tags: [opus_4_6], [sonnet_4_6], [haiku_4_5] — appended to task group lines only
+              - format: tasks_1 [opus_4_6] or tasks_1 [sonnet_4_6] — model goes right after the group name
+              - if no model tag is present on a task group, opus_4_6 is assumed
+              - never put model tags on individual tasks, steps, or phases — only on task groups
+              - all tasks within a task group inherit the model from their group line
+
+    :- info_formatting
+          - minimize blank lines — one blank line between sections only, never double blank lines
+          - no blank line between a step label and its indented dash items
+          - no blank line between a task label and its indented dash items
+          - blank lines only between steps groups, between individual phases, and after info blocks
+          - phase_info and step_info use a dash prefix: :- phase_info, :- step_info
+          - a blank line must follow the info block before the next section begins
+          - each steps group contains multiple individual steps
+          - each step contains task groups, each task group contains multiple tasks
+          - example:
+
+              :: phase_1 [1/3]   // this is a single phase, not a group
+                  ::= auth_and_data_layer
+
+                  :- phase_info
+                      implement the core authentication and data layer...
+
+                  :- steps_1 [x]      // this is a single group of steps, multiple steps exist inside it, and multiple tasks groups exist for each step.
+                      - steps_overall_description: over all description what this set of steps are supposed to try to solve.
+
+                      :- step_1
+
+                        - step_info: what is this step trying to solve using these tasks
+
+                            :- tasks_1 [x]       // this is a group of tasks  and a single step can have multiple tasks groups
+                                task_1.1 - [x] task_title
+                                  - task description item line explaining task pieces in detail
+                                  - task description item line explaining task pieces in detail
+                                  - task description item line explaining task pieces in detail
+                                task_1.2 - [x] task_title
+                                  - task description item line explaining task pieces in detail
+                                  - task description item line explaining task pieces in detail
+                                  - task description item line explaining task pieces in detail
+                                task_1.3 - [x] task_title
+                                  - task description item line explaining task pieces in detail
+                                  - task description item line explaining task pieces in detail
+                                  - task description item line explaining task pieces in detail
+
+                        - [x] StorageService with FlutterSecureStorage
+
+                            :- tasks_2 [x]
+                                task_2.1 - [x] task_title
+                                  - task description item line explaining task pieces in detail
+                                  - task description item line explaining task pieces in detail
+                                  - task description item line explaining task pieces in detail
+                                task_2.2 - [x] task_title
+                                  - task description item line explaining task pieces in detail
+                                  - task description item line explaining task pieces in detail
+                                  - task description item line explaining task pieces in detail
+                            :- tasks_3 [x]
+                                task_3.1 - [x] task_title
+                                  - line (215): other sentence that describes task what to do, add line number only if that sentence requires it. not about HOW, more about what needs to be done
+                                  - line (112): other sentence that describes task
+                                task_3.2 - [x] task_title
+                                  - task description item line explaining task pieces in detail
+                                  - task description item line explaining task pieces in detail
+                                  - task description item line explaining task pieces in detail
+
+                  :- steps_2 [ ]
+
+                      - steps_overall_description: over all description what this set of steps are supposed to try to solve.
+
+                      :- step_1
+
+                        - step_info: what is this step trying to solve using these tasks
+
+                              :- tasks_4 [ ] - task_title
+                                  - task description item line explaining task pieces in detail
+                                  - task description item line explaining task pieces in detail
+                                  - task description item line explaining task pieces in detail
+
+
+:: multi_app_workspace
+  ::= app_sections, per_app_isolation
+
+      :- app_section_format
+          - in multi-project workspaces, dev_plan.txt, dev_plan_all_archive.txt,
+            dev_overall_tasks.txt, and dev_current_tasks.txt are grouped by app
+          - top level marker: [app: app_name] (e.g., [app: project_hearts])
+          - use [app: shared] for cross-app work (aiq_core_, dev_ plugins, workspace-level)
+          - each [app: app_name] section is completely independent from all other app sections
+          - ai must never mix content from one app section into another
+          - reading one app section must give full context without needing other sections
+
+      :- per_app_numbering
+          - every counter is per app — phases, steps, task groups all scoped to [app: app_name]
+          - each app starts at tasks_1 and increments sequentially (tasks_1, tasks_2, ... tasks_77, tasks_200)
+          - phase numbers also start at phase_1 per app
+          - [app: shared] has its own independent counters starting at 1
+          - no number is shared or coordinated across apps
+          - prompt_counter remains single global counter (not per app)
+
+      :- per_app_tracking
+          - dev_current_tasks.txt has one [app: app_name] block per active app
+          - only apps with active work appear in dev_current_tasks.txt
+          - dev_plan.txt has all apps, each under their own [app: app_name] heading
+          - dev_overall_tasks.txt mirrors dev_plan.txt structure per app
+          - dev_plan_all_archive.txt archives per app, never merge across apps
+
+
+:: phase_execution
+    - in dev_plan all phases must be completed one after another
+    - do not start a new phase until the current one is completed
+    - work phase by phase, step by step, task by task
+    - 3 passes required per phase before marking done, passes are not repetitions:
+        - pass_1: implement and get it working in offline/demo mode
+        - pass_2: harden — security, edge cases, type errors, no debug leaks
+        - pass_3: optimize — bundle, lazy loading, memory, no regressions
+    - each pass is distinct work with its own commit tagged [PASS1] [PASS2] [PASS3]
+
+
+:: recurring_phases
+    - these are full phases with 3-pass requirement, not quick sweeps
+    - they recur at intervals and get their own phase re inserted into dev_plans automatically
+        - remove_comments     every 5 phases    [FAST]
+        - security_audit      every 10 phases   [OPUS]
+        - performance_audit   every 10 phases   [SONNET]
+        - architecture_mod    every 15 phases   [OPUS]
+
+
+
+
+:: repositories
+  ::= launchable_apps, services, hardware, all_private_unless_noted
+  ::= all apps use provider abstraction — datastore, cloud, payments, auth swappable
+
+  :- personal_apps
+      - project_family_calendar
+          - flutter, firebase
+          - family life organizer — scheduling, chores, meals, routines, rewards, photos, recipes, reminders, smart
+  display mode for kitchen/tv
+
+      - project_coffee_flutter
+          - flutter
+          - mCAD — mobile computer-aided dispatch for emergency services, incident management, unit dispatch/tracking,
+  patient records, grid locations, route mapping, real-time comments, shift management
+
+      - project_personal_finances
+          - flutter, getx, dio
+          - personal finance — bill tracking, credit card management, personal tax (cra), corporate tax, ai assistant,
+  document collection, budget planning, canada-specific (hst, provincial brackets)
+
+      - project_portfolio_react
+          - react
+          - personal portfolio site — 7 themes (dark hacker, cyberpunk, sunset, etc), space invaders mini-game,
+  responsive
+
+      - project_fitforge
+          - flutter, getx, dio
+          - workout tracker — 500+ exercise library, custom builder, rep/set tracking, rest timers, PRs, progressive
+  overload, workout templates (ppl, 5x5, phul), plate calculator, ai suggestions, apple health/google fit
+
+      - project_zenmind
+          - flutter, getx, dio
+          - meditation and mindfulness — guided library, breathing exercises (box, 4-7-8, wim hof), ambient sounds mixer,
+   sleep stories, body scans, walking meditations, mood journal, streak tracking, ai-personalized sessions, pomodoro
+  focus timer
+
+      - project_awesomequotes
+          - android
+          - quotes app — daily quotes and collections
+
+      - project_sudoku
+          - flutter
+          - sudoku puzzle game
+
+      - project_browser
+          - javascript, browser extension
+          - brave extension — custom picture-in-picture player with gesture controls
+
+      - project_musicone
+          - flutter, getx
+          - music player — local and streaming playback, playlist management, audio equalizer with presets, music
+  discovery and recommendations
+
+  :- food_and_commerce
+      - project_aiq_food_client
+          - flutter, supabase
+          - tinis treats — bakery e-commerce, ordering, delivery
+
+      - project_bakery_direct
+          - flutter, getx, dio
+          - independent bakery platform — storefront, cart, checkout, delivery zones, shipping (canada post, ups),
+  ingredient/finished goods inventory with expiry, recipe management with batch scaling, custom cake order form,
+  subscription boxes (bread club, pastry box), loyalty rewards, kitchen display queue, catering module,
+  allergen/nutrition labels, sales and waste reporting
+
+  :- adult_and_social
+      - project_aiq_tubehub_one
+          - flutter, 7 pillars
+          - porn aggregator — scraper-based content indexing, never hosts content, 7 independent content pillars
+
+      - project_hearts
+          - flutter
+          - tinder clone — dating app, domain hearts.ca
+
+      - project_showgirls
+          - multi
+          - onlyfans clone — creator content platform, subscriptions, payouts, domain showgirls.ca
+
+      - project_livemate
+          - multi
+          - online cam modelling platform, live streaming, tipping, domain livemate.ca
+
+      - project_lust
+          - multi
+          - grindr clone — dating/social app, domain realbender.ca
+
+  :- finance_and_trading
+      - project_prism
+          - flutter, getx, dio, websocket
+          - ai-powered trading — real-time candlestick charts with technical indicators, order book with live bids/asks,
+  market/limit orders, portfolio p&l, ai assistant via cortex agents, price alerts
+
+      - project_savvy
+          - flutter, getx, dio
+          - personal banking — financial services, accounts, transactions, budgeting
+
+      - project_equitex
+          - multi
+          - financial trading and investment platform
+
+      - project_vault
+          - flutter, getx, web3dart, dio
+          - crypto wallet and nft gallery — multi-chain (eth, polygon, sepolia), token balances with price tracking, nft
+  gallery with metadata, send/receive with qr, token swap, aiq token and nft integration
+
+      - project_purse
+          - multi
+          - payments api platform — domain securepurse.ca, brand purse secure api
+
+      - project_mobius
+          - multi
+          - vaultie.io clone — personal finance vault, secure document storage, brand mobius guard
+
+      - project_sphere
+          - multi (react, flutter, aws, terraform)
+          - spherefinancial — full platform with web frontend, mobile apps, cloud infrastructure, ci/cd pipelines
+
+      - project_trading_engine_api
+          - node.js, express, websocket
+          - order matching engine — price-time priority, market + limit orders, partial fills, risk manager (position
+  sizing limits, max order value), real-time trade feed via websocket
+
+      - project_market_data_api
+          - node.js, express, websocket, coingecko
+          - market data service — real-time prices, ohlcv candles (1m/5m/15m/1h/4h/1d), technical indicators (rsi, macd,
+  sma, ema, bollinger bands), websocket price streaming with subscribe/unsubscribe
+
+      - project_payment_gateway_api
+          - node.js, express
+          - cross-border payment gateway — oauth2 token auth, party onboarding with kyc and documents, account management
+   with statements, payout/payin processing, fx spot rates/quotes/deal booking, reference data (countries, currencies,
+  banks)
+
+      - project_cortex
+          - node.js, websocket
+          - ai trading intelligence — 4 agents: sentinel (market watcher), oracle (technical/fundamental analysis),
+  guardian (risk/position sizing), velocity (auto execution), claude + gpt providers, real-time signal streaming via
+  websocket
+
+      - project_blockchain_contracts
+          - solidity, hardhat
+          - smart contracts — aiq erc-20 token (1b max supply), erc-721 nft (10k max, 0.01 eth mint), nft marketplace
+  (2.5% platform fee), deploys to sepolia testnet + polygon mainnet
+
+      - project_token_nft_factory
+          - node.js, solidity
+          - cli toolkit — rapid erc-20 token and erc-721/1155 nft collection launcher, scaffolds full project from
+  templates
+
+      - project_pump_robot
+          - flutter, getx, dio, websocket
+          - rapid trading bot — multi-exchange (binance, coinbase, kucoin, kraken, bybit), live scanner (top movers,
+  volume spikes, new listings), auto buy/sell with kelly criterion sizing, trailing stops and take-profit tiers, cortex
+  ai sentiment and whale tracking, backtesting engine, telegram/discord alerts
+
+  :- betting
+      - project_pokershark
+          - flutter, getx
+          - poker strategy — monte carlo equity calculator against ranges, session tracker with p&l/bb-hr/vpip/pfr, 13x13
+   preflop charts by position (6-max, 9-max), icm calculator for tournaments, hand review/replay with notes, push/fold
+  calculator
+
+      - project_raceedge
+          - flutter, getx
+          - horse racing and greyhound — race cards with runner details/odds/jockey/trainer, form analysis with last-5
+  visualization and speed ratings, exotic bet builder (exacta, trifecta, quinella) with pool calculations, track
+  conditions, ai form analysis
+
+      - project_betbrain
+          - flutter, getx
+          - ai sports betting — odds comparison across 10+ bookmakers with line movement, ai predictions with
+  confidence/ev/reasoning, live scores with minute tracking, single/parlay/teaser bets, p&l with roi, covers
+  nfl/nba/mlb/nhl/soccer/mma/tennis/boxing/golf/f1
+
+      - project_cryptowager
+          - flutter, getx, web3dart
+          - crypto prediction betting — price movement bets (up/down/exact/range), defi yield predictions, nft floor
+  price bets, on-chain settlement via smart contract escrow, peer-to-peer wager matching, ai price prediction models,
+  bankroll management
+
+      - project_propbets
+          - flutter, getx
+          - proposition and prediction markets — polymarket/kalshi integration, custom prop bet creation, categories
+  (politics, sports, crypto, entertainment, weather), portfolio for open positions, ai probability estimator from news +
+  data, market maker mode
+
+      - project_arbibot
+          - flutter, getx, websocket
+          - arbitrage detection — cross-bookmaker and cross-exchange scanner, sure-bet calculator (guaranteed profit from
+   odds differences), multi-leg arb (3-way, 4-way), auto bet placement with rapid execution, push alerts on threshold,
+  risk assessment per opportunity (liquidity, limits, timing)
+
+  :- security_and_networking
+      - project_aiq_hacking_one
+          - flutter, dart server
+          - aiq guardian — security plugin suite monorepo, packages: guardian_core (security scanner, threat analyzer,
+  auth, storage, infra), guardian_plugin, guardian_ui, cloud_provider abstraction (firebase impl), dart backend server
+
+      - project_aiq_networking_one
+          - flutter, rust (public)
+          - 3-project mono — aiq_server (dns, vpn, proxy, firewall, gateway, ca, security ops, intel, monitoring),
+  aiq_flutter_plugin (one dependency = all networking/security features), aiq_common (shared models, protocols, configs)
+
+  :- infrastructure_and_services
+      - project_api_gateway
+          - rust
+          - centralized api routing, rate limiting, request forwarding for ecosystem
+
+      - project_config_api
+          - rust
+          - feature flags, version blocking, kill switches — centralized config for all apps
+
+      - project_auth_service
+          - rust
+          - shared auth — oauth2, jwt issuance and validation across ecosystem
+
+      - project_notification_service
+          - rust
+          - notification dispatch — push, email, sms for all apps
+
+      - project_aiq_audit_one
+          - flutter
+          - rf scanner and device tracker — wifi scanning, ble scanning, classic bluetooth, hackrf ffi integration, sdr#
+  tcp client, dsp engine (demodulator, signal classifier, spectrum analyzer), location tracking, background sync
+
+  :- cannabis
+      - project_pandaweed
+          - flutter, getx, dio, google maps
+          - leafly/weedmaps clone — dispensary listings with map/directions/hours/menus/ratings, strain database with
+  thc/cbd/terpenes/effects/reviews, geo-restricted (full cannabis in legal countries, accessories-only elsewhere),
+  turn-by-turn delivery, community board, weekly newsletters, cart and ordering
+
+  :- aiq_ecosystem
+      - project_aiq_hub_one
+          - flutter (public)
+          - cross-platform system inspection hub — dashboard, ai agents, ai vision, bluetooth audit, wifi audit, gps,
+  kernel info, net inspector, security audit, sensors, system info, app inspector, tools hub, operations, productivity,
+  utilities
+
+      - project_aiq_core_ui
+          - flutter
+          - shared theme, widgets, plugin contract — base ui layer consumed by all aiq flutter apps
+
+      - project_aiq_radio_one
+          - flutter
+          - sdr/rf toolkit — spectrum viewer, waterfall display, fft engine, audio demodulation, device support (rtl-sdr
+  via tcp, hackrf, evil crow rf, wifi pineapple), bluetooth le scanner, wifi analyzer, collection logging, oui lookup
+
+  :- hardware
+      - project_mems_array
+          - embedded, pcb
+          - mems microphone beamforming array — dense mems mic array for long-range audio beamforming and acoustic
+  focusing, directional listening, audio "pockets" (focused sound zones), noise rejection via digital beamforming dsp,
+  modules: mems_array_ctrl + N x mems_mic_ch, powered by shared power_supply or usb
+
+      - project_antennas
+          - embedded, pcb
+          - modular phased array antenna system — 700mhz to 6+ ghz, directional boards for beamforming
+  (900/1500/2400/5800mhz beam), omnidirectional boards for area monitoring (900/1500/2400/5800mhz omni), central
+  beamforming controller (ant_ctrl), modes: long-range targeted beamforming, short-range area-of-effect (apartment
+  scale), directional beam (few hundred feet), wide-area omnidirectional monitoring, requires external sdr (hackrf,
+  rtl-sdr, wifi pineapple)
+
+      - project_laser_array
+          - embedded, pcb
+          - modular laser diode array — up to 8 independently controlled channels, variable current drive, pwm dimming,
+  safety interlocks, modules: laser_array_ctrl + N x laser_driver_ch + laser diodes, powered by shared power_supply
+
+      - project_power_supply
+          - embedded, pcb
+          - universal modular variable psu — ac mains (120v/60hz) to regulated dc, shared dependency for all hardware
+  projects, profiles: small (5w usb 5v/1a for controllers and mems), medium (30w 12-15vdc/2a for laser and antenna ctrl),
+   large (100w+ 12-48vdc/5a+ for high-power arrays), modules: psu_ac_input + psu_dc_converter (small/medium/large
+  variants)
+
+  :- mechanic
+      - project_mechanic_shop
+          - flutter, getx, dio
+          - auto shop management — work orders with status tracking (draft to invoiced), appointment scheduling with
+  sms/email reminders, invoice generation from work orders with payment recording, parts inventory with stock
+  levels/reorder alerts/supplier tracking, employee management with roles/certs/ratings, vehicle history and service
+  timeline, service catalog with labor rates and parts estimation, multi-payment (credit, cash, check, e-transfer),
+  technician job tracking and performance metrics
+
+  :- dev_shared
+      - project_flutter_dev_tools
+          - flutter
+          - shared dev tool packages — http inspector, log inspector, file explorer, terminal, toolkit, app flavouring,
+  used as git submodules across all flutter apps
+
+
+
+
+:: project_info
+
+  [template_file :— project root folder]
+    - project: {name}
+    - description: {5-10 sentences} // sentences use app features to describe it
+    - github: https://github.com/aiq-dev-alpha/{repo_name}
+    - android_id: aiq.io.{category}.{name}.app
+    - category: {software:personal | software:business | software:betting | software:finance | etc}
+
+  :- aiq_project_configs      [user-maintain-configurations-section]
+    - user can enter configs here such as currently by default build variant is set to :dev
+      - this means when the build happens ai can actually change the boolean value for isDev, isUat, isPrd and based on the build we can show dev_tools
+
+
+  :- critical_config
+    - {pinned deps, env flags, offline mode, region restrictions, version blocking, kill switches}
+
+  :- stack
+    - framework: {flutter | react | rust | multi}
+    - state: {riverpod | getx | zustand | etc}
+    - navigation: {manual | gorouter | getx_named | react_router | etc}
+    - http: {dio | http | fetch | etc}
+    - workspace: {yes with member list | no}
+
+  :- platform_variants
+    - {list each entry point and what platform it targets}
+
+  :- provider_abstraction
+    - auth: {current impl} — swappable to {alternatives}
+    - database: {current impl} — swappable to {alternatives}
+    - storage: {current impl} — swappable to {alternatives}
+    - payments: {current impl} — swappable to {alternatives}
+    - push: {current impl} — swappable to {alternatives}
+    - analytics: {current impl} — swappable to {alternatives}
+    - mock: {yes full | partial | none}
+
+  :- features
+    :- feature categorie[s]
+      - [feature heading]     // simple easy to understand few words
+          - {feature with enough detail to understand scope}
+          {2-3 line per feature fully explaining it}
+
+  :- dev_tools
+    - {list submodule plugins present}
+
+
+  :- status
+    - {current phase and progress}

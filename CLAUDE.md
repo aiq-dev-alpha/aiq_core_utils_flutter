@@ -7,7 +7,7 @@ tasks_counter = increment as soon as a task is marked completed
 plan_fixer_counter = increment every time a task completes
 
 
-* All uncompleted tasks without [x] instead [ ] belong in dev_plan.txt + last 5 completed phases -> steps -> tasks
+** All uncompleted and new phases->steps->tasks without [x] instead [ ] belong in dev_plan.txt + last 5 completed phases->steps->tasks
 
 1. Update variables immediately: [read dev_instructions.txt, project_info.txt only when the counter reaches max limit and variables reset back to 1]
     agentic_variables:
@@ -33,6 +33,7 @@ plan_fixer_counter = increment every time a task completes
         - dev_plan.txt
 
     plan_fixer_counter:
+      ** REMEMBER: new phases->steps->tasks go in dev_plan.txt which can have all uncompleted/new stuff but only 5 old completed phases->steps->tasks
       - taks number cannot be lower then phase number since phase can contain many tasks
         - if this is the case in your dev_plan.txt then there is an error and fix the dev_instructions.txt, project_info.txt files, dev_plan.txt and dev_current_tasks.txt files immedaitely.
       - increment the counter by 1 every time a task completes immediately.

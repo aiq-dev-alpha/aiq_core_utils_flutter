@@ -1,0 +1,16 @@
+name: aiq_core_utils_flutter
+description: Shared utility services including backend, input validation, security rules, content pipeline, and connectivity for Flutter apps.
+version: 1.0.0
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+  flutter: '>=3.10.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  connectivity_plus: ^6.0.0
+  aiq_core_data_store_flutter:
+    git:
+      url: https://github.com/aiq-dev-alpha/aiq_core_data_store_flutter.git
+      ref: main

@@ -7,8 +7,8 @@
 
     all variables needed for ai to run are in agentic_variables.txt
       :- current variables
-        prompts_counter = 1           // 1 to 10, reset on 10 and entire dev_instructions.txt and project_info.txtfiles
-        tasks_counter = 1            // 1 to 20, reset on 20 and entire dev_instructions.txt and project_info.txt files
+        prompts_counter = 1           // 1 to 5, reset on 5 and entire dev_instructions.txt and project_info.txtfiles
+        tasks_counter = 1            // 1 to 5, reset on 5 and entire dev_instructions.txt and project_info.txt files
 
     prompts_counter:
       - increment the coutner by 1 every user prompt immediately.

@@ -1105,3 +1105,4 @@
 
     :- status
       - {current phase and progress}
+read dev_instructions.txt fully immediately and apply new rules immediately and properly update variables too going forward

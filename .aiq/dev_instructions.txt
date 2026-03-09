@@ -32,12 +32,9 @@
           - dev_plan.txt
 
 
-    dev_plan_all_archive.txt
-      - only completed phases and their steps and tasks are added in this document
-      - main arcive file: never flushed only updated when dev_plan.txt needs to be flushed. this file includes the full history of the project plans.
-
-
-    dev_plan.txt
+    dev_plan.txt        [ai interacts with this file first when creating new phases->setps->tasks]
+      - new phases are always written here in this file firt above all, this includes steps and tasks fully. 
+        - everything gets copied from this file into: dev_current_tasks.txt, dev_overall_tasks.txt, dev_plan_all_archive.txt
       - this is the main dev_plan file that has phases and steps and tasks listed, everything is copied from this file into the dev_overall_tasks.txt
       - this file includes plans -> phases -> steps -> tasks
       - only the last 5 phases are kept here — anything older must be moved immediately to dev_plan_all_archive.txt to keep this file short and preserve ai memory
@@ -46,15 +43,20 @@
       - see :: plan_format domain for plan rulesets.
 
 
+    dev_current_tasks.txt [marked done first] [ai looks at this file when looking at a task]
+      - this is the first file to be updated as x when a task completes, then dev_plan.txt after that everything is moved from dev_plan into archive and overview_tasks
+      - lists of tasks ai is working on, most immedaite and volatile list that is edited often.
+      - includes current phase and steps and tasks
+
     dev_overall_tasks.txt
       - all tasks are put here regardless of phase and staps
       - list of steps loaded with their tasks
       - everything is copied from here to the dev_current_tasks.txt for keeping track of concurrent steps and tasks.
       - this is a ledger reference only — ai does not read this file during normal operation, it is maintained for human reference and full project history
 
-    dev_current_tasks.txt [marked done first]
-      - lists of tasks ai is working on, most immedaite and volatile list that is edited often.
-      - includes current phase and steps and tasks
+    dev_plan_all_archive.txt
+      - only completed phases and their steps and tasks are added in this document
+      - main arcive file: never flushed only updated when dev_plan.txt needs to be flushed. this file includes the full history of the project plans.
 
     dev_bugs.txt
       - user edit only file: includes common issues that user notices and ai should check the project to make sure these issues do not occur.

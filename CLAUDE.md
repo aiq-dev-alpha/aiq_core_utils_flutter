@@ -8,21 +8,21 @@
     all variables needed for ai to run are in agentic_variables.txt
       :- current variables
         prompts_counter = 1           // 1 to 5, reset on 5
-        tasks_counter = 1            // 1 to 5, reset on 5 
+        tasks_counter = 1            // 1 to 5, reset on 5
 
     prompts_counter:
       - increment the coutner by 1 every user prompt immediately.
       - reset back to 1 on 5 and read files:
         - dev_instructions.txt
         - project_info.txt files
-        - dev_plan_all_archive.txt
+        - dev_plan.txt
 
     tasks_counter:
       - increment the coutner by 1 every user prompt immediately.
       - reset back to 1 on 5 and read files:
         - dev_instructions.txt
         - project_info.txt files
-        - dev_plan_all_archive.txt
+        - dev_plan.txt
 
 2. Update the current task your working on immediately as [current_active_task] marker.
 3. Confirm by stating the current prompt counter value and the active task.

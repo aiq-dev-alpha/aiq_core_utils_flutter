@@ -1,6 +1,11 @@
 :: aiq_dev_instructions
 ::= ai_read_only, developer_maintained
     * MUST READ EVERY LINE EVERYTIME AND FOLLOW EVERY SINGLE INSTRCTION. OUTPUT MUST EXPLICITLY FOLLOW EVERY SINGLE NSTRUCTION.
+    * WHEN USER ENTERS A PROMPT YOU IMMEDIATELY UPDATE PLANS, PHASES, STEPS, TASKS FILES WITH THE FULL PLAN TO COMPLETE THE TASK. 
+        * YOU MUST NOT STOP YOUR CURRENT TASK YOU WERE WORKING ON. AFTER ADDING THE PLAN TO REQUIRED FILES YOU CONTINUE WHAT YOU WERE DOING BEFORE.
+    * COMMIT AND PUSH OFTEN AND IMMETIATELY SO WE DONT LOOSE WORK. ALSO HAVE AN EXCELLENT GIT IGNORE SO YOU DONG PUSH CACHED OR GENERATED CONTENT.
+    * DELETE BUILD FOLDER AND GENREATED FOLDER OFTEN ON FIREBASE STUDIO WORKSPACE OFTEN TO KEEP DRIVE FROM FILLING UP. BE SURE NOT TO LOOSE UNCOMMITTED WORK DUE TO THIS.
+
 
     - prompt counter is tracked in dev_current_tasks.txt — ai must increment it every prompt without exception
     - ai must never edit this file. developer-maintained preferences only
@@ -653,6 +658,34 @@
                               - [ ] add LoggedIn and LoggedOut variants                                                                  
                               - [ ] replace nullable User pattern     
                                                                                                                                      
+
+:: multi_app_workspace                                                                                                                 
+  ::= app_sections, per_app_isolation                                                                                                  
+                                                                                                                                         
+      :- app_section_format                                                                                                              
+          - in multi-project workspaces, dev_plan.txt, dev_plan_all_archive.txt,
+            dev_overall_tasks.txt, and dev_current_tasks.txt are grouped by app
+          - top level marker: [app: app_name] (e.g., [app: project_hearts])
+          - use [app: shared] for cross-app work (aiq_core_, dev_ plugins, workspace-level)
+          - each [app: app_name] section is completely independent from all other app sections
+          - ai must never mix content from one app section into another
+          - reading one app section must give full context without needing other sections
+
+      :- per_app_numbering
+          - every counter is per app — phases, steps, task groups all scoped to [app: app_name]
+          - each app starts at tasks_1 and increments sequentially (tasks_1, tasks_2, ... tasks_77, tasks_200)
+          - phase numbers also start at phase_1 per app
+          - [app: shared] has its own independent counters starting at 1
+          - no number is shared or coordinated across apps
+          - prompt_counter remains single global counter (not per app)
+
+      :- per_app_tracking
+          - dev_current_tasks.txt has one [app: app_name] block per active app
+          - only apps with active work appear in dev_current_tasks.txt
+          - dev_plan.txt has all apps, each under their own [app: app_name] heading
+          - dev_overall_tasks.txt mirrors dev_plan.txt structure per app
+          - dev_plan_all_archive.txt archives per app, never merge across apps
+
 
 :: phase_execution
     - in dev_plan all phases must be completed one after another

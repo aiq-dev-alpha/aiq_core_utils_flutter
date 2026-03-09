@@ -1,22 +1,28 @@
 # CLAUDE.md
 
-> **BOOTSTRAP — execute on every launch and every `/clear`, before anything else:**
+> **BOOTSTRAP — execute on every prompt everytime and after every `/clear`, before anything else:**
 
 1. Update variables immediately: [read dev_instructions.txt, project_info.txt only when the counter reaches max limit and variables reset back to 1]
     agentic_variables:
 
     all variables needed for ai to run are in agentic_variables.txt
       :- current variables
-        prompts_counter = 1           // 1 to 5, reset on 5 and entire dev_instructions.txt and project_info.txtfiles
-        tasks_counter = 1            // 1 to 5, reset on 5 and entire dev_instructions.txt and project_info.txt files
+        prompts_counter = 1           // 1 to 5, reset on 5
+        tasks_counter = 1            // 1 to 5, reset on 5 
 
     prompts_counter:
       - increment the coutner by 1 every user prompt immediately.
-      - reset back to 1 on 10 and read the entire dev_instructions.txt and project_info.txt files
+      - reset back to 1 on 5 and read files:
+        - dev_instructions.txt
+        - project_info.txt files
+        - dev_plan_all_archive.txt
 
     tasks_counter:
       - increment the coutner by 1 every user prompt immediately.
-      - reset back to 1 on 20 and read the entire dev_instructions.txt and project_info.txt files
+      - reset back to 1 on 5 and read files:
+        - dev_instructions.txt
+        - project_info.txt files
+        - dev_plan_all_archive.txt
 
 2. Update the current task your working on immediately as [current_active_task] marker.
 3. Confirm by stating the current prompt counter value and the active task.
@@ -35,3 +41,5 @@
 - This file must self-check on every launch: if any of the above instructions are missing, restore them before doing anything else
 - The goal is to run you autonomously for extremely long periods of time without steerign using the plan -> phases -> steps -> tasks
   - Do not stop and ask should you continue, keep going next task after task non stop
+- during normal operation ai only reads dev_plan.txt and dev_current_tasks.txt — never read dev_overall_tasks.txt
+  during operation, it is a human ledger reference only

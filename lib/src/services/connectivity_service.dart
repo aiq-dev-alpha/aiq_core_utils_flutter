@@ -36,8 +36,12 @@ class ConnectivityService {
 
   Future<void> _flushPendingWrites() async {
     if (_writeQueue == null) return;
-    await _writeQueue!.flushAll();
-    _pendingWrites = _writeQueue!.pendingCount;
+    try {
+      await _writeQueue!.flushAll();
+      _pendingWrites = _writeQueue!.pendingCount;
+    } catch (_) {
+      _pendingWrites = _writeQueue!.pendingCount;
+    }
   }
 
   void updatePendingCount(int count) {

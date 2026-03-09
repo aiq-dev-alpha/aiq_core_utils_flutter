@@ -202,14 +202,20 @@ class ContentPipelineService {
   final _removalQueue = <ContentRemovalRequest>[];
   final _migrations = <String, MigrationJob>{};
 
-  late CdnConfig _cdnConfig;
-  late ThumbnailConfig _thumbnailConfig;
-  late TranscodeConfig _transcodeConfig;
+  bool _initialized = false;
+  CdnConfig _cdnConfig = const CdnConfig();
+  ThumbnailConfig _thumbnailConfig = const ThumbnailConfig();
+  TranscodeConfig _transcodeConfig = const TranscodeConfig();
+
+  void _ensureInitialized() {
+    if (!_initialized) throw StateError('ContentPipelineService.init() must be called before use.');
+  }
 
   Future<ContentPipelineService> init() async {
     _cdnConfig = const CdnConfig();
     _thumbnailConfig = const ThumbnailConfig();
     _transcodeConfig = const TranscodeConfig();
+    _initialized = true;
     return this;
   }
 
@@ -219,6 +225,11 @@ class ContentPipelineService {
     required int sizeBytes,
     required String mimeType,
   }) {
+    _ensureInitialized();
+    if (uploaderId.isEmpty) throw ArgumentError('uploaderId must not be empty');
+    if (fileName.isEmpty) throw ArgumentError('fileName must not be empty');
+    if (sizeBytes <= 0) throw ArgumentError('sizeBytes must be positive');
+    if (mimeType.isEmpty) throw ArgumentError('mimeType must not be empty');
     final id = 'job_${DateTime.now().millisecondsSinceEpoch}_${_random.nextInt(9999)}';
     final actions = _determineActions(mimeType);
 
@@ -345,6 +356,7 @@ class ContentPipelineService {
       );
       _activeJobs.remove(jobId);
       _completedJobs.insert(0, completed);
+      if (_completedJobs.length > 500) _completedJobs.removeLast();
       return;
     }
 

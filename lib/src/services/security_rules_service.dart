@@ -211,13 +211,18 @@ class SecurityRulesService {
   static final _sqlPattern = RegExp(r"(\b(SELECT|INSERT|UPDATE|DELETE|DROP|UNION|ALTER|CREATE|EXEC)\b)", caseSensitive: false);
   static final _xssPattern = RegExp(r'(javascript:|on\w+\s*=|eval\s*\(|document\.|window\.)', caseSensitive: false);
 
-  late ContentPolicyConfig _contentPolicy;
-  late UploadRule _imageUploadRule;
-  late UploadRule _videoUploadRule;
-  late UploadRule _audioUploadRule;
-  late AgeRule _ageRule;
-  late PrivacyRule _privacyRule;
+  bool _initialized = false;
+  ContentPolicyConfig _contentPolicy = const ContentPolicyConfig();
+  UploadRule _imageUploadRule = const UploadRule(allowedMimeTypes: [], maxFileSizeBytes: 0);
+  UploadRule _videoUploadRule = const UploadRule(allowedMimeTypes: [], maxFileSizeBytes: 0);
+  UploadRule _audioUploadRule = const UploadRule(allowedMimeTypes: [], maxFileSizeBytes: 0);
+  AgeRule _ageRule = const AgeRule();
+  PrivacyRule _privacyRule = PrivacyRule();
   final _geoRules = <String, GeoRule>{};
+
+  void _ensureInitialized() {
+    if (!_initialized) throw StateError('SecurityRulesService.init() must be called before use.');
+  }
 
   Future<SecurityRulesService> init() async {
     _contentPolicy = ContentPolicyConfig(
@@ -268,6 +273,7 @@ class SecurityRulesService {
 
     _initDefaultRateLimits();
     _initDefaultGeoRules();
+    _initialized = true;
 
     return this;
   }
@@ -327,6 +333,7 @@ class SecurityRulesService {
   }
 
   RuleChainResult evaluateInputRules(String input, {String? context}) {
+    _ensureInitialized();
     final stopwatch = Stopwatch()..start();
     final results = <RuleResult>[];
 
@@ -355,6 +362,7 @@ class SecurityRulesService {
   }
 
   String sanitizeInput(String input) {
+    _ensureInitialized();
     var sanitized = input;
     sanitized = sanitized.replaceAll(_scriptPattern, '');
     sanitized = sanitized.replaceAll(_htmlTagPattern, '');
@@ -398,6 +406,7 @@ class SecurityRulesService {
     required String mimeType,
     List<int>? headerBytes,
   }) {
+    _ensureInitialized();
     final stopwatch = Stopwatch()..start();
     final results = <RuleResult>[];
     final ext = fileName.split('.').last.toLowerCase();
@@ -522,12 +531,17 @@ class SecurityRulesService {
     return result;
   }
 
-  List<String> detectPii(String text) {
-    final found = <String>[];
-    for (final pattern in _privacyRule.piiPatterns) {
-      final matches = pattern.allMatches(text);
+  List<Map<String, dynamic>> detectPii(String text) {
+    final found = <Map<String, dynamic>>[];
+    for (var i = 0; i < _privacyRule.piiPatterns.length; i++) {
+      final matches = _privacyRule.piiPatterns[i].allMatches(text);
       for (final m in matches) {
-        found.add(m.group(0)!);
+        found.add({
+          'pattern_index': i,
+          'start': m.start,
+          'end': m.end,
+          'length': m.end - m.start,
+        });
       }
     }
     return found;

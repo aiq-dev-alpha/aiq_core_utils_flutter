@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 enum HttpMethod { get, post, put, patch, delete }
 
@@ -253,6 +252,9 @@ class BackendService {
     };
 
     if (endpoint.cacheTimeout != null) {
+      if (_responseCache.length > 500) {
+        _responseCache.removeWhere((_, v) => v.isExpired);
+      }
       _responseCache[key] = _CachedResponse(
         data: response,
         cachedAt: DateTime.now(),
@@ -289,6 +291,12 @@ class BackendService {
     required int sizeBytes,
     String? folder,
   }) async {
+    if (fileName.isEmpty) throw ArgumentError('fileName must not be empty');
+    if (fileName.contains('..') || fileName.contains('/') || fileName.contains('\\')) {
+      throw ArgumentError('fileName contains invalid path characters');
+    }
+    if (sizeBytes <= 0) throw ArgumentError('sizeBytes must be positive');
+
     await Future.delayed(const Duration(milliseconds: 200));
 
     if (sizeBytes > storageConfig.maxUploadSizeMb * 1024 * 1024) {

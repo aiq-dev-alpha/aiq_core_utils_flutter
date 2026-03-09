@@ -5,6 +5,7 @@
         * YOU MUST NOT STOP YOUR CURRENT TASK YOU WERE WORKING ON. AFTER ADDING THE PLAN TO REQUIRED FILES YOU CONTINUE WHAT YOU WERE DOING BEFORE.
     * COMMIT AND PUSH OFTEN AND IMMETIATELY SO WE DONT LOOSE WORK. ALSO HAVE AN EXCELLENT GIT IGNORE SO YOU DONG PUSH CACHED OR GENERATED CONTENT.
     * DELETE BUILD FOLDER AND GENREATED FOLDER OFTEN ON FIREBASE STUDIO WORKSPACE OFTEN TO KEEP DRIVE FROM FILLING UP. BE SURE NOT TO LOOSE UNCOMMITTED WORK DUE TO THIS.
+    * DO NOT REDUCE A TASK TO A SINGLE LINE ITEM. FIRST LINE IS THE TASK SUMMARY TITLE, THEN UNDER IT WE USE MULTIPLE DASH LINES TO DESCRIBE THE TASK AND NOT LOOSE CONTEXT.
 
 
     - prompt counter is tracked in dev_current_tasks.txt — ai must increment it every prompt without exception
@@ -118,7 +119,7 @@
 
 
 :: ai_workflow_rules
-    - maintain a prompt counter in dev_current_tasks.txt — increment every single prompt, reset to 1 at 25
+    - maintain a prompt counter in dev_current_tasks.txt — increment every single prompt, reset to 1 at 10
       - every time counter resets to 1, re-read dev_instructions.txt fully before doing anything else
       - ignore small prompts in counter like commit and push and build
       - prompts typed in a quick succession within 30 seconds is 1 prompt 

@@ -1,11 +1,13 @@
-
 # CLAUDE.md
 
 > **BOOTSTRAP — execute on every prompt everytime and after every `/clear`, before anything else:**
 
 prompts_counter = increment every single prompt
 tasks_counter = increment as soon as a task is marked completed
-plan_fixer_counter = increment every single prompt
+plan_fixer_counter = increment every time a task completes
+
+
+* All uncompleted tasks without [x] instead [ ] belong in dev_plan.txt + last 5 completed phases -> steps -> tasks
 
 1. Update variables immediately: [read dev_instructions.txt, project_info.txt only when the counter reaches max limit and variables reset back to 1]
     agentic_variables:
@@ -33,7 +35,7 @@ plan_fixer_counter = increment every single prompt
     plan_fixer_counter:
       - taks number cannot be lower then phase number since phase can contain many tasks
         - if this is the case in your dev_plan.txt then there is an error and fix the dev_instructions.txt, project_info.txt files, dev_plan.txt and dev_current_tasks.txt files immedaitely.
-      - increment the counter by 1 every user prompt immediately.
+      - increment the counter by 1 every time a task completes immediately.
       - reset back to 1 on 5 and fix any violations in dev_plan.txt and do full output for each phase, step and task
       - if dev_plan.txt has more then 5 completed phases move all but last 5 completed phases to dev_plan_all_archive.txt
         - do not move un-complted phases, steps, and /or tasks to any file but dev_current_tasks.txt

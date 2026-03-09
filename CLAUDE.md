@@ -26,7 +26,10 @@
 
     plan_fixer_counter:
       - increment the counter by 1 every user prompt immediately.
-      - reset back to 1 on 5 and fix any violations in dev_plan.txt and do full output for tasks steps and phases
+      - reset back to 1 on 5 and fix any violations in dev_plan.txt and do full output for each phase, step and task 
+      - if dev_plan.txt has more then 5 completed phases move all but last 5 completed phases to dev_plan_all_archive.txt
+        - do not move un-complted phases, steps, and /or tasks to any file but dev_current_tasks.txt 
+
 
 2. Update the current task your working on immediately as [current_active_task] marker.
 3. Confirm by stating the current prompt counter value and the active task.

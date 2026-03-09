@@ -322,14 +322,8 @@ class SecurityRulesService {
   }
 
   void _initDefaultGeoRules() {
-    for (final region in ['CN', 'IR', 'KP', 'RU']) {
-      _geoRules[region] = GeoRule(
-        regionCode: region,
-        contentAllowed: false,
-        blockedFeatures: ['payment', 'upload', 'messaging'],
-        legalNotice: 'Service unavailable in this region',
-      );
-    }
+    // No hardcoded geo restrictions — configure via addGeoRule() based on
+    // your app's compliance requirements and backend configuration.
   }
 
   RuleChainResult evaluateInputRules(String input, {String? context}) {

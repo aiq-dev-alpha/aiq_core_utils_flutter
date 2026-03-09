@@ -149,57 +149,14 @@ class BackendService {
   bool get isConnected => _isConnected;
   List<Map<String, dynamic>> get requestLog => List.unmodifiable(_requestLog);
 
-  static const collections = [
-    DatabaseCollection(
-      name: 'users',
-      indexes: ['email', 'phone', 'display_name', 'created_at'],
-      schema: {'uid': 'string', 'email': 'string', 'phone': 'string', 'display_name': 'string',
-        'photo_url': 'string', 'bio': 'string', 'role': 'string', 'created_at': 'timestamp',
-        'updated_at': 'timestamp', 'is_active': 'boolean', 'settings': 'map'},
-    ),
-    DatabaseCollection(
-      name: 'profiles',
-      indexes: ['user_id', 'location', 'age', 'is_visible'],
-      schema: {'user_id': 'string', 'age': 'number', 'gender': 'string', 'location': 'geopoint',
-        'interests': 'array', 'photos': 'array', 'is_verified': 'boolean', 'is_bot': 'boolean'},
-    ),
-    DatabaseCollection(
-      name: 'messages',
-      indexes: ['channel_id', 'sender_id', 'created_at'],
-      schema: {'channel_id': 'string', 'sender_id': 'string', 'text': 'string',
-        'media_url': 'string', 'type': 'string', 'created_at': 'timestamp', 'is_read': 'boolean'},
-    ),
-    DatabaseCollection(
-      name: 'matches',
-      indexes: ['user_a', 'user_b', 'created_at', 'status'],
-      schema: {'user_a': 'string', 'user_b': 'string', 'status': 'string',
-        'created_at': 'timestamp', 'updated_at': 'timestamp'},
-    ),
-    DatabaseCollection(
-      name: 'transactions',
-      indexes: ['user_id', 'type', 'status', 'created_at'],
-      schema: {'user_id': 'string', 'type': 'string', 'amount': 'number', 'currency': 'string',
-        'status': 'string', 'provider': 'string', 'receipt_id': 'string', 'created_at': 'timestamp'},
-    ),
-    DatabaseCollection(
-      name: 'subscriptions',
-      indexes: ['user_id', 'product_id', 'status', 'expires_at'],
-      schema: {'user_id': 'string', 'product_id': 'string', 'tier': 'string',
-        'status': 'string', 'started_at': 'timestamp', 'expires_at': 'timestamp', 'auto_renew': 'boolean'},
-    ),
-    DatabaseCollection(
-      name: 'reports',
-      indexes: ['reporter_id', 'reported_id', 'status', 'created_at'],
-      schema: {'reporter_id': 'string', 'reported_id': 'string', 'reason': 'string',
-        'details': 'string', 'evidence': 'array', 'status': 'string', 'created_at': 'timestamp'},
-    ),
-    DatabaseCollection(
-      name: 'notifications',
-      indexes: ['user_id', 'type', 'is_read', 'created_at'],
-      schema: {'user_id': 'string', 'type': 'string', 'title': 'string', 'body': 'string',
-        'data': 'map', 'is_read': 'boolean', 'created_at': 'timestamp'},
-    ),
-  ];
+  List<DatabaseCollection> _collections = const [];
+
+  /// Configure the database collections for this app.
+  void setCollections(List<DatabaseCollection> collections) {
+    _collections = List.unmodifiable(collections);
+  }
+
+  List<DatabaseCollection> get collections => _collections;
 
   Future<BackendService> init() async {
     return this;

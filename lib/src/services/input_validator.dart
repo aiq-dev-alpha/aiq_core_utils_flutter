@@ -3,7 +3,9 @@ class InputValidator {
     r'^[a-zA-Z0-9.!#$%&*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$',
   );
 
-  static final _phoneRegex = RegExp(r'^\+?[\d\s\-\(\)]{10,16}$');
+  /// Matches E.164 format: optional +, then 7-15 digits.
+  /// Allows spaces, dashes, parens as formatting but validates digit count.
+  static final _phoneDigitsRegex = RegExp(r'^\d{7,15}$');
 
   static final _unsafeCharsRegex = RegExp(r'[<>"&\\]');
 
@@ -15,9 +17,9 @@ class InputValidator {
 
   static bool isValidPhone(String phone) {
     final trimmed = phone.trim();
+    // Strip everything except digits
     final digitsOnly = trimmed.replaceAll(RegExp(r'[^\d]'), '');
-    if (digitsOnly.length < 10 || digitsOnly.length > 15) return false;
-    return _phoneRegex.hasMatch(trimmed);
+    return _phoneDigitsRegex.hasMatch(digitsOnly);
   }
 
   static bool isValidPassword(String password, {int minLength = 8}) {

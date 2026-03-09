@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:math';
 
 enum RuleCategory { input, content, rate, upload, auth, privacy, geo, age }

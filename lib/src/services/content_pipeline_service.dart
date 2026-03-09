@@ -207,6 +207,9 @@ class ContentPipelineService {
   ThumbnailConfig _thumbnailConfig = const ThumbnailConfig();
   TranscodeConfig _transcodeConfig = const TranscodeConfig();
 
+  ThumbnailConfig get thumbnailConfig => _thumbnailConfig;
+  TranscodeConfig get transcodeConfig => _transcodeConfig;
+
   void _ensureInitialized() {
     if (!_initialized) throw StateError('ContentPipelineService.init() must be called before use.');
   }

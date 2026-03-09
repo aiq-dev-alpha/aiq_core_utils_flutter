@@ -5,7 +5,9 @@
         * YOU MUST NOT STOP YOUR CURRENT TASK YOU WERE WORKING ON. AFTER ADDING THE PLAN TO REQUIRED FILES YOU CONTINUE WHAT YOU WERE DOING BEFORE.
     * COMMIT AND PUSH OFTEN AND IMMETIATELY SO WE DONT LOOSE WORK. ALSO HAVE AN EXCELLENT GIT IGNORE SO YOU DONG PUSH CACHED OR GENERATED CONTENT.
     * DELETE BUILD FOLDER AND GENREATED FOLDER OFTEN ON FIREBASE STUDIO WORKSPACE OFTEN TO KEEP DRIVE FROM FILLING UP. BE SURE NOT TO LOOSE UNCOMMITTED WORK DUE TO THIS.
-    * DO NOT REDUCE A TASK TO A SINGLE LINE ITEM. FIRST LINE IS THE TASK SUMMARY TITLE, THEN UNDER IT WE USE MULTIPLE DASH LINES TO DESCRIBE THE TASK AND NOT LOOSE CONTEXT.
+    * DO NOT REDUCE A PHASE TO A SINGLE LINE ITEM. FULLY WRITE EACH PHASE AFTER READING THIS ENTIRE DOCUMENT.
+    * DO NOT REDUCE A STEP TO A SINGLE LINE ITEM. FULLY WRITE EACH STEP AFTER READING THIS ENTIRE DOCUMENT.
+    * DO NOT REDUCE A TASK TO A SINGLE LINE ITEM. FIRST LINE IS THE TASK SUMMARY TITLE, THEN UNDER IT WE USE MULTIPLE DASH LINES TO DESCRIBE THE TASK AND NOT LOOSE CONTEXT. FULLY WRITE EACH TASK AFTER READING THIS ENTIRE DOCUMENT.
 
 
     - prompt counter is tracked in dev_current_tasks.txt — ai must increment it every prompt without exception
@@ -123,6 +125,20 @@
       - every time counter resets to 1, re-read dev_instructions.txt fully before doing anything else
       - ignore small prompts in counter like commit and push and build
       - prompts typed in a quick succession within 30 seconds is 1 prompt 
+
+    :- task_completion_counter
+        - maintain a task counter in dev_current_tasks.txt — increment by 1 every time a task is marked [x]
+        - counter format: `:: task_counter: N` on its own line, right below the prompt_counter line
+        - counter starts at 1, increments after every single completed task
+        - when the counter reaches 5, ai must:
+            1. reset the counter back to 1
+            2. re-read this entire dev_instructions.txt file top to bottom before doing anything else
+            3. re-read dev_bugs.txt to check for any new issues
+            4. verify all rules are still being followed in current output
+        - this counter is critical — ai forgets rules over long sessions, this forces periodic refresh
+        - the counter never pauses, never skips — every [x] mark on any task increments it
+        - if multiple tasks complete in rapid succession, still increment for each one individually
+
     - mark tasks as done immediately after completing them
     - update dev_current_tasks.txt after every single task completes
     - update dev_plan_all_archive.txt when a step completes and when a full phase completes

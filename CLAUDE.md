@@ -3,6 +3,10 @@
 
 > **BOOTSTRAP — execute on every prompt everytime and after every `/clear`, before anything else:**
 
+prompts_counter = increment every single prompt
+tasks_counter = increment as soon as a task is marked completed
+plan_fixer_counter = increment every single prompt
+
 1. Update variables immediately: [read dev_instructions.txt, project_info.txt only when the counter reaches max limit and variables reset back to 1]
     agentic_variables:
 

@@ -1,4 +1,4 @@
-  :: aiq_dev_instructions
+:: aiq_dev_instructions
   ::= ai_read_only, developer_maintained
       * MUST READ EVERY LINE EVERYTIME AND FOLLOW EVERY SINGLE INSTRCTION. OUTPUT MUST EXPLICITLY FOLLOW EVERY SINGLE NSTRUCTION.
       * WHEN USER ENTERS A PROMPT YOU IMMEDIATELY UPDATE PLANS, PHASES, STEPS, TASKS FILES WITH THE FULL PLAN TO COMPLETE THE TASK. 
@@ -10,7 +10,7 @@
       * DO NOT REDUCE A TASK TO A SINGLE LINE ITEM. FIRST LINE IS THE TASK SUMMARY TITLE, THEN UNDER IT WE USE MULTIPLE DASH LINES TO DESCRIBE THE TASK AND NOT LOOSE CONTEXT. FULLY WRITE EACH TASK AFTER READING THIS ENTIRE DOCUMENT.
 
 
-      - prompt counter is tracked in dev_current_tasks.txt — ai must increment it every prompt without exception
+      - prompt counter is tracked in agentic_variables.txt — ai must increment it every prompt without exception
       - ai must never edit this file. developer-maintained preferences only
       - ai must read this file extremely carefully and fully, every rule written in here is non-negotiable and must always be followed fully upon every single user prompt
       - every sub-agent spawned and every model used must also fully follow every rule in this file without exception — rules are not optional for delegated work
@@ -20,6 +20,12 @@
   :: files list
     dev_instructions.txt
       - top entry level instructions file, ai needs to read this often to remember all the rules.
+
+    agentic_variables.txt
+      :- current variables
+        prompts_counter = 1           // 1 to 10, reset on 10 and entire dev_instructions.txt and project_info.txt files
+        tasks_counter = 1            // 1 to 20, reset on 20 and entire dev_instructions.txt and project_info.txt files
+
 
     dev_plan_all_archive.txt
       - main arcive file: never flushed only updated when dev_plan.txt needs to be flushed. this file includes the full history of the project plans.
@@ -121,13 +127,15 @@
 
 
   :: ai_workflow_rules
-      - maintain a prompt counter in dev_current_tasks.txt — increment every single prompt, reset to 1 at 10
+      - maintain a prompt counter in agentic_variables.txt — increment every single prompt, reset to 1 at 10
         - every time counter resets to 1, re-read dev_instructions.txt fully before doing anything else
         - ignore small prompts in counter like commit and push and build
         - prompts typed in a quick succession within 30 seconds is 1 prompt 
+        - use 'agentic_variables.txt' to load variable `prompts_counter`
 
-      * this is a complicated set of rules: you forget things here alot: re read this entire file every 5 tasks are completed, keep this counter reset it back to one everytime it gets to 5
-        - this is a second counter 1 to 5 that you must maintain, after 5 tasks completed. re read this entire file to remember every rule 100% from this file.
+      * this is a complicated set of rules: you forget things here alot: re read this entire file every20 tasks are completed, keep this counter reset it back to one everytime it gets to 5
+        - this is a second counter 1 to 20 that you must maintain, after 20 tasks completed. re read this entire file to remember every rule 100% from this file.
+        - use 'agentic_variables.txt' to load variable `tasks_counter`
 
       - mark tasks as done immediately after completing them
       - update dev_current_tasks.txt after every single task completes

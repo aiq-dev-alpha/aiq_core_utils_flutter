@@ -1,3 +1,4 @@
+
 # CLAUDE.md
 
 > **BOOTSTRAP — execute on every prompt everytime and after every `/clear`, before anything else:**
@@ -8,7 +9,8 @@
     all variables needed for ai to run are in agentic_variables.txt
       :- current variables
         prompts_counter = 1           // 1 to 5, reset on 5
-        tasks_counter = 1            // 1 to 5, reset on 5 
+        tasks_counter = 1            // 1 to 5, reset on 5
+        plan_fixer_counter = 1      // 1 to 5, reset on 5
 
     prompts_counter:
       - increment the coutner by 1 every user prompt immediately.
@@ -25,10 +27,12 @@
         - dev_plan.txt
 
     plan_fixer_counter:
+      - taks number cannot be lower then phase number since phase can contain many tasks
+        - if this is the case in your dev_plan.txt then there is an error and fix the dev_instructions.txt, project_info.txt files, dev_plan.txt and dev_current_tasks.txt files immedaitely.
       - increment the counter by 1 every user prompt immediately.
-      - reset back to 1 on 5 and fix any violations in dev_plan.txt and do full output for each phase, step and task 
+      - reset back to 1 on 5 and fix any violations in dev_plan.txt and do full output for each phase, step and task
       - if dev_plan.txt has more then 5 completed phases move all but last 5 completed phases to dev_plan_all_archive.txt
-        - do not move un-complted phases, steps, and /or tasks to any file but dev_current_tasks.txt 
+        - do not move un-complted phases, steps, and /or tasks to any file but dev_current_tasks.txt
 
 
 2. Update the current task your working on immediately as [current_active_task] marker.

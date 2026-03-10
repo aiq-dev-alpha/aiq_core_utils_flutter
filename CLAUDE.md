@@ -16,6 +16,7 @@ plan_fixer_counter = increment every time a task completes
 ** user_active_queries_list.txt: write down user query verbatim under the correct appname so ai can keep track of active queries and remove old ones.
     ** remove old queries that have completed tasks by looking at phases in dev_plan.txt since we can have upto 10 last completed phases in there.
 ** AUTO COMPACT CONVERSATION EVERY 60 MINUTES THEN RE-READ `dev_instructions.txt`
+    - add a quick task to make sure after compact dev_instructions read is ensured.
 ** ALWAYS LOOK AT RECURRING PHASES AND INSERT THEM AS DUPLICATES OVER AND OVER BASED ON HOW OFTEN A CERTAIN PHASE NEEDS TO BE RE INSERTED
 ** All uncompleted and new phases->steps->tasks without [x] instead [ ] belong in dev_plan.txt + last 10 completed phases->steps->tasks
 

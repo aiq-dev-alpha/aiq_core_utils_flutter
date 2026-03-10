@@ -1,45 +1,58 @@
 # CLAUDE.md
 
+
+
 > **BOOTSTRAP — execute on every prompt everytime and after every `/clear`, before anything else:**
+
+
 
 prompts_counter = increment every single prompt
 tasks_counter = increment as soon as a task is marked completed
 plan_fixer_counter = increment every time a task completes
 
 
-** All uncompleted and new phases->steps->tasks without [x] instead [ ] belong in dev_plan.txt + last 5 completed phases->steps->tasks
+** EVERY PROMPT: evaluate if query needs to be tracked and is a coding requirement.
+  - do not add queries that easily and immediately satisfy
+** user_active_queries_list.txt: write down user query verbatim under the correct appname so ai can keep track of active queries and remove old ones.
+    ** remove old queries that have completed tasks by looking at phases in dev_plan.txt since we can have upto 10 last completed phases in there.
+** AUTO COMPACT CONVERSATION EVERY 60 MINUTES
+** ALWAYS LOOK AT RECURRING PHASES AND INSERT THEM AS DUPLICATES OVER AND OVER BASED ON HOW OFTEN A CERTAIN PHASE NEEDS TO BE RE INSERTED
+** All uncompleted and new phases->steps->tasks without [x] instead [ ] belong in dev_plan.txt + last 10 completed phases->steps->tasks
 
 1. Update variables immediately: [read dev_instructions.txt, project_info.txt only when the counter reaches max limit and variables reset back to 1]
     agentic_variables:
 
     all variables needed for ai to run are in agentic_variables.txt
       :- current variables
-        prompts_counter = 1           // 1 to 5, reset on 5
-        tasks_counter = 1            // 1 to 5, reset on 5
-        plan_fixer_counter = 1      // 1 to 5, reset on 5
+        prompts_counter = 1           // 1 to 10, reset on 10
+        tasks_counter = 1            // 1 to 20, reset on 20
+        plan_fixer_counter = 1      // 1 to 20, reset on 20
 
     prompts_counter:
       - increment the coutner by 1 every user prompt immediately.
-      - reset back to 1 on 5 and read files:
+      - reset back to 1 on 10 and read files:
         - dev_instructions.txt
         - project_info.txt files
         - dev_plan.txt
 
     tasks_counter:
       - increment the coutner by 1 every user prompt immediately.
-      - reset back to 1 on 5 and read files:
+      - reset back to 1 on 20 and read files:
         - dev_instructions.txt
         - project_info.txt files
         - dev_plan.txt
 
     plan_fixer_counter:
-      ** REMEMBER: new phases->steps->tasks go in dev_plan.txt which can have all uncompleted/new stuff but only 5 old completed phases->steps->tasks
-      - taks number cannot be lower then phase number since phase can contain many tasks
+      ** REMEMBER: new phases->steps->tasks go in dev_plan.txt which can have all uncompleted/new stuff but only 10 old completed phases->steps->tasks
+      ** CHECK: taks number cannot be lower then phase number since phase can contain many tasks
         - if this is the case in your dev_plan.txt then there is an error and fix the dev_instructions.txt, project_info.txt files, dev_plan.txt and dev_current_tasks.txt files immedaitely.
       - increment the counter by 1 every time a task completes immediately.
-      - reset back to 1 on 5 and fix any violations in dev_plan.txt and do full output for each phase, step and task
-      - if dev_plan.txt has more then 5 completed phases move all but last 5 completed phases to dev_plan_all_archive.txt
+      - reset back to 1 on 20 and fix any violations in dev_plan.txt and do full output for each phase, step and task
+      - if dev_plan.txt has more then 10 completed phases move all but last 10 completed phases to dev_plan_all_archive.txt
         - do not move un-complted phases, steps, and /or tasks to any file but dev_current_tasks.txt
+      - read the entire user_active_queries_list.txt to see what user actually typed to reground your phases and steps and task as you work on them.
+      - read the entire user_active_queries_list.txt to see what user actually typed to reground your phases and steps and task as you work on them.
+
 
 
 2. Update the current task your working on immediately as [current_active_task] marker.

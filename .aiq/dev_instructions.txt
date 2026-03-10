@@ -1,6 +1,8 @@
 :: aiq_dev_instructions
   ::= ai_read_only, developer_maintained
-      ** AUTO COMPACT CONVERSATION EVERY 60 MINUTES
+      ** AUTO COMPACT CONVERSATION EVERY 60 MINUTES THEN RE-READ `dev_instructions.txt`
+        - add a quick task to make sure after compact dev_instructions read is ensured.
+      * DO NOT CREATE FILES IN .AIQ FOLDER UNLESS THE FIELS ARE LISTED IN THIS DOCUMENT.
       * MUST READ EVERY LINE EVERYTIME AND FOLLOW EVERY SINGLE INSTRCTION. OUTPUT MUST EXPLICITLY FOLLOW EVERY SINGLE NSTRUCTION.
       * WHEN USER ENTERS A PROMPT YOU IMMEDIATELY UPDATE PLANS, PHASES, STEPS, TASKS FILES WITH THE FULL PLAN TO COMPLETE THE TASK. 
           * YOU MUST NOT STOP YOUR CURRENT TASK YOU WERE WORKING ON. AFTER ADDING THE PLAN TO REQUIRED FILES YOU CONTINUE WHAT YOU WERE DOING BEFORE.
@@ -49,6 +51,8 @@
       ** remove old queries that have completed tasks by looking at phases in dev_plan.txt since we can have upto 10 last completed phases in there.
 
       - this file is intended to keep track of exactly what user typed so ai can read it fully before starting a task.
+      - do not add simple queries like 'continue, keep going'
+      - do not add queries that were answered immedaitely and do not output code.
 
 
     dev_plan.txt        [ai interacts with this file first when creating new phases->setps->tasks]

@@ -10,12 +10,12 @@ prompts_counter = increment every single prompt
 tasks_counter = increment as soon as a task is marked completed
 plan_fixer_counter = increment every time a task completes
 
-
+** DO NOT CREATE FILES IN .AIQ FOLDER UNLESS THE FIELS ARE LISTED IN THIS DOCUMENT.
 ** EVERY PROMPT: evaluate if query needs to be tracked and is a coding requirement.
   - do not add queries that easily and immediately satisfy
 ** user_active_queries_list.txt: write down user query verbatim under the correct appname so ai can keep track of active queries and remove old ones.
     ** remove old queries that have completed tasks by looking at phases in dev_plan.txt since we can have upto 10 last completed phases in there.
-** AUTO COMPACT CONVERSATION EVERY 60 MINUTES
+** AUTO COMPACT CONVERSATION EVERY 60 MINUTES THEN RE-READ `dev_instructions.txt`
 ** ALWAYS LOOK AT RECURRING PHASES AND INSERT THEM AS DUPLICATES OVER AND OVER BASED ON HOW OFTEN A CERTAIN PHASE NEEDS TO BE RE INSERTED
 ** All uncompleted and new phases->steps->tasks without [x] instead [ ] belong in dev_plan.txt + last 10 completed phases->steps->tasks
 
@@ -50,7 +50,6 @@ plan_fixer_counter = increment every time a task completes
       - reset back to 1 on 20 and fix any violations in dev_plan.txt and do full output for each phase, step and task
       - if dev_plan.txt has more then 10 completed phases move all but last 10 completed phases to dev_plan_all_archive.txt
         - do not move un-complted phases, steps, and /or tasks to any file but dev_current_tasks.txt
-      - read the entire user_active_queries_list.txt to see what user actually typed to reground your phases and steps and task as you work on them.
       - read the entire user_active_queries_list.txt to see what user actually typed to reground your phases and steps and task as you work on them.
 
 

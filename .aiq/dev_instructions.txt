@@ -1,5 +1,6 @@
 :: aiq_dev_instructions
   ::= ai_read_only, developer_maintained
+      ** AUTO COMPACT CONVERSATION EVERY 60 MINUTES
       * MUST READ EVERY LINE EVERYTIME AND FOLLOW EVERY SINGLE INSTRCTION. OUTPUT MUST EXPLICITLY FOLLOW EVERY SINGLE NSTRUCTION.
       * WHEN USER ENTERS A PROMPT YOU IMMEDIATELY UPDATE PLANS, PHASES, STEPS, TASKS FILES WITH THE FULL PLAN TO COMPLETE THE TASK. 
           * YOU MUST NOT STOP YOUR CURRENT TASK YOU WERE WORKING ON. AFTER ADDING THE PLAN TO REQUIRED FILES YOU CONTINUE WHAT YOU WERE DOING BEFORE.
@@ -8,7 +9,7 @@
       * DO NOT REDUCE A PHASE TO A SINGLE LINE ITEM. FULLY WRITE EACH PHASE AFTER READING THIS ENTIRE DOCUMENT.
       * DO NOT REDUCE A STEP TO A SINGLE LINE ITEM. FULLY WRITE EACH STEP AFTER READING THIS ENTIRE DOCUMENT.
       * DO NOT REDUCE A TASK TO A SINGLE LINE ITEM. FIRST LINE IS THE TASK SUMMARY TITLE, THEN UNDER IT WE USE MULTIPLE DASH LINES TO DESCRIBE THE TASK AND NOT LOOSE CONTEXT. FULLY WRITE EACH TASK AFTER READING THIS ENTIRE DOCUMENT.
-
+      * ALWAYS LOOK AT RECURRING PHASES AND INSERT THEM AS DUPLICATES OVER AND OVER BASED ON HOW OFTEN A CERTAIN PHASE NEEDS TO BE RE INSERTED
 
       - prompt counter is tracked in agentic_variables.txt — ai must increment it every prompt without exception
       - ai must never edit this file. developer-maintained preferences only
@@ -23,9 +24,9 @@
 
     agentic_variables.txt
       :- current variables
-        prompts_counter = 1           // 1 to 5, reset on 5
-        tasks_counter = 1            // 1 to 5, reset on 5
-        plan_fixer_counter = 1      // 1 to 5, reset on 5 
+        prompts_counter = 1           // 1 to 10, reset on 10
+        tasks_counter = 1            // 1 to 20, reset on 20
+        plan_fixer_counter = 1      // 1 to 20, reset on 20 
 
         :- on reset prompts_counter or tasks_counter: read these files:
           - dev_instructions.txt
@@ -33,21 +34,32 @@
           - dev_plan.txt
 
         :- on reset plan_fixer_counter:
+          ** REMEMBER: new phases->steps->tasks go in dev_plan.txt which can have all uncompleted/new stuff but only 10 old completed phases->steps->tasks
           - taks number cannot be lower then phase number since phase can contain many tasks
           - if this is the case in your dev_plan.txt then there is an error and fix the dev_instructions.txt, project_info.txt files, dev_plan.txt and dev_current_tasks.txt files immedaitely.
-          - increment the counter by 1 every user prompt immediately.
-          - reset back to 1 on 5 and fix any violations in dev_plan.txt and do full output for each phase, step and task 
-          - if dev_plan.txt has more then 5 completed phases move all but last 5 completed phases to dev_plan_all_archive.txt
+          - increment the counter by 1 every time a task completes immediately.
+          - reset back to 1 on 20 and fix any violations in dev_plan.txt and do full output for each phase, step and task 
+          - if dev_plan.txt has more then 10 completed phases move all but last 10 completed phases to dev_plan_all_archive.txt
           - do not move un-complted phases, steps, and /or tasks to any file but dev_current_tasks.txt 
+          - read the entire user_active_queries_list.txt to see what user actually typed to reground your phases and steps and task as you work on them.
+
+
+    user_active_queries_list.txt
+      ** user_active_queries_list.txt: write down user query verbatim under the correct appname so ai can keep track of active queries and remove old ones.    
+      ** remove old queries that have completed tasks by looking at phases in dev_plan.txt since we can have upto 10 last completed phases in there.
+
+      - this file is intended to keep track of exactly what user typed so ai can read it fully before starting a task.
+
 
     dev_plan.txt        [ai interacts with this file first when creating new phases->setps->tasks]
+      ** All uncompleted and new phases->steps->tasks without [x] instead [ ] belong in dev_plan.txt + last 10 completed phases->steps->tasks
       - new phases are always written here in this file firt above all, this includes steps and tasks fully. 
         - everything gets copied from this file into: dev_current_tasks.txt, dev_overall_tasks.txt, dev_plan_all_archive.txt
       - this is the main dev_plan file that has phases and steps and tasks listed, everything is copied from this file into the dev_overall_tasks.txt
       - this file includes plans -> phases -> steps -> tasks
-      - only the last 5 phases are kept here — anything older must be moved immediately to dev_plan_all_archive.txt to keep this file short and preserve ai memory
-      - if dev_plan.txt has more than 5 undone phases leave them all in dev_plan.txt they only get moved after more then 5 completed phases are there.
-      - ai must check this file length every prompt and move any phases beyond the last 5 to dev_plan_all_archive.txt before doing any other work
+      - only the last 10 phases are kept here — anything older must be moved immediately to dev_plan_all_archive.txt to keep this file short and preserve ai memory
+      - if dev_plan.txt has more than 10 undone phases leave them all in dev_plan.txt they only get moved after more then 10 completed phases are there.
+      - ai must check this file length every prompt and move any phases beyond the last 10 to dev_plan_all_archive.txt before doing any other work
       - see :: plan_format domain for plan rulesets.
 
 
@@ -151,14 +163,14 @@
 
 
   :: ai_workflow_rules
-      - maintain a prompt counter in agentic_variables.txt — increment every single prompt, reset to 1 at 5
+      - maintain a prompt counter in agentic_variables.txt — increment every single prompt, reset to 1 at 10
         - every time counter resets to 1, re-read dev_instructions.txt fully before doing anything else
         - ignore small prompts in counter like commit and push and build
         - prompts typed in a quick succession within 30 seconds is 1 prompt 
         - use 'agentic_variables.txt' to load variable `prompts_counter`
 
-      * this is a complicated set of rules: you forget things here alot: re read this entire file every 5 tasks are completed, keep this counter reset it back to one everytime it gets to 5
-        - this is a second counter 1 to 5 that you must maintain, after 5 tasks completed. re read this entire file to remember every rule 100% from this file.
+      * this is a complicated set of rules: you forget things here alot: re read this entire file every 20 tasks are completed, keep this counter reset it back to one everytime it gets to 20
+        - this is a second counter 1 to 20 that you must maintain, after 20 tasks completed. re read this entire file to remember every rule 100% from this file.
         - use 'agentic_variables.txt' to load variable `tasks_counter`
 
       - mark tasks as done immediately after completing them
@@ -173,8 +185,8 @@
         every task line — never summarize, compress, rewrite, or drop any field
       - never create new tracking files, never split existing ones, never rename them
         the only tracking files that exist are the ones defined at session start
-      - dev_plan.txt must never exceed 5 phases — after any phase completes or a new phase is added that pushes
-        the count above 5, immediately move the oldest phase(s) to dev_plan_all_archive.txt before continuing
+      - dev_plan.txt must never exceed 10 phases — after any phase completes or a new phase is added that pushes
+        the count above 10, immediately move the oldest phase(s) to dev_plan_all_archive.txt before continuing
       - ai only reads dev_plan.txt and dev_current_tasks.txt during normal operation —
         dev_overall_tasks.txt is a ledger maintained for human reference and is never read by ai
 
@@ -580,7 +592,7 @@
           - when copying completed phases/steps/tasks to dev_plan_all_archive.txt, copy
             the full original block exactly as written — never summarize, compress, rewrite,
             or drop any field
-          - only keep last 5 phases in dev_plan.txt and automatically move them to dev_plan_all_archive.txt 
+          - only keep last 10 phases in dev_plan.txt and automatically move them to dev_plan_all_archive.txt 
 
       :- numbering_rules
           - use single digits: phase_1, step_1, task_1 — never zero-pad (not phase_001)                                                  
@@ -753,15 +765,54 @@
       - each pass is distinct work with its own commit tagged [PASS1] [PASS2] [PASS3]
 
 
-  :: recurring_phases
+
+:: recurring_phases
+
+      ** IMPORTANT TO CONSIDER THESE WHEN MAKING NEW PHASES -> STEPS -> TASKS AND ADDDING THEM TO `dev_plan.txt` INEJECTING THEM INTO VARIOUS PHASE STAGES AS DUPLICATES SO AI CAN REDO THE TASK FULLY AND ACTUALLY MAKE IMPROVEMENTS 
       - these are full phases with 3-pass requirement, not quick sweeps
       - they recur at intervals and get their own phase re inserted into dev_plans automatically
-          - remove_comments     every 5 phases    [FAST]
-          - security_audit      every 10 phases   [OPUS]
-          - performance_audit   every 10 phases   [SONNET]
-          - architecture_mod    every 15 phases   [OPUS]
 
+          - remove_comments [FAST]
+              - every 10 phases
 
+          - security_audit [OPUS]
+              - every 10 phases
+
+          - performance_audit [SONNET]
+              - every 10 phases
+
+          - architecture_mod [OPUS]
+              - every 15 phases
+
+          - rename_files_classes_variables properly [FAST]
+              - every 20 phases
+              - rename files based on standard practice for platforms and popular apps and recommended architecture
+              - do not name files based on things like 'secure, happy, bad, better, good' 
+              - file naming should not be sentiment based. it's very important to name classes and variables properly regarldess of security and their function.
+
+          - cost analysis
+              - how to lower the cost of app launching and maintaining
+              - how to store data offline as much as possible to save on cost
+
+          - api and cloud provider and datastore modularity check [OPUS]
+              - every 10 phases
+              - make sure i can easily change any provider, cloud, datastore, api and easily switch them to offline storage
+
+          - implement dev_plugins [OPUS]
+              - clone and install beggining of project
+
+          - implement aiq_core libraries and use them [OPUS]
+              - clone and install beggining of project
+              - every 15 phases modularize and reuse core implementation
+
+          - implement testing [OPUS]
+              - every 10 phases
+
+          - production readyness check [OPUS]
+              - every 25 phases
+
+          - look for bugs [OPUS]
+              - every 5 phases
 
 
   :: repositories
@@ -1093,11 +1144,27 @@
       - analytics: {current impl} — swappable to {alternatives}
       - mock: {yes full | partial | none}
 
+
+    :- capailities
+      
+      - notifications
+        - sends notification campaign
+          - campains: [business rule / usecase] driven campain description
+      
+      - location
+        - map: provides turn by turn navigation
+          - provides direction to dispensary turn by turn also route preview
+
+
+
+
     :- features
       :- feature categorie[s]
         - [feature heading]     // simple easy to understand few words 
             - {feature with enough detail to understand scope}
             {2-3 line per feature fully explaining it}
+
+
 
     :- dev_tools
       - {list submodule plugins present}
@@ -1105,4 +1172,21 @@
 
     :- status
       - {current phase and progress}
-read dev_instructions.txt fully immediately and apply new rules immediately and properly update variables too going forward
+
+
+
+:: volatile
+
+  - user_active_queries_list.text                     // this file is editeed often to keep track of what user types and what is being worked on so incase we loose context we can look at this file and restart that with current_active_tasks.txt and dev_plan.txt
+    // ai needs to edit this file and add the prompt user typed in correctly under the right app_name 
+    // ai needs to remove queries by looking at dev_plan.txt completed phases. queries expand across multiple phases.
+      ** be selective with queries that actually get tracked, anything that is satisfied immediately does not come here. 
+        - DO NOT ADD LARGE QUERIES HERE -> SUMMARIZE IF POSSIBLE
+
+    - [app_name_1]
+      - [user_query_1] // ai is responsible for writing down each user query and keep track of this file every prompt
+      - [user_query_2]
+    
+    - [app_name_2]
+      - [user_query_1] 
+      - [user_query_2]

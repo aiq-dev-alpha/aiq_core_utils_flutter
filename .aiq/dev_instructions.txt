@@ -13,7 +13,7 @@
       * DO NOT REDUCE A TASK TO A SINGLE LINE ITEM. FIRST LINE IS THE TASK SUMMARY TITLE, THEN UNDER IT WE USE MULTIPLE DASH LINES TO DESCRIBE THE TASK AND NOT LOOSE CONTEXT. FULLY WRITE EACH TASK AFTER READING THIS ENTIRE DOCUMENT.
       * ALWAYS LOOK AT RECURRING PHASES AND INSERT THEM AS DUPLICATES OVER AND OVER BASED ON HOW OFTEN A CERTAIN PHASE NEEDS TO BE RE INSERTED
 
-      - prompt counter is tracked in agentic_variables.txt — ai must increment it every prompt without exception
+      - prompt counter is tracked in agentic_variables.txt — ai must increment it every prompt without exception and only user manually text input content counts as a prompt count
       - ai must never edit this file. developer-maintained preferences only
       - ai must read this file extremely carefully and fully, every rule written in here is non-negotiable and must always be followed fully upon every single user prompt
       - every sub-agent spawned and every model used must also fully follow every rule in this file without exception — rules are not optional for delegated work
@@ -168,6 +168,7 @@
 
   :: ai_workflow_rules
       - maintain a prompt counter in agentic_variables.txt — increment every single prompt, reset to 1 at 10
+        - only user manually text input content counts as a prompt count
         - every time counter resets to 1, re-read dev_instructions.txt fully before doing anything else
         - ignore small prompts in counter like commit and push and build
         - prompts typed in a quick succession within 30 seconds is 1 prompt 
@@ -748,7 +749,7 @@
             - phase numbers also start at phase_1 per app
             - [app: shared] has its own independent counters starting at 1
             - no number is shared or coordinated across apps
-            - prompt_counter remains single global counter (not per app)
+            - prompt_counter remains single global counter (not per app) and only user manually text input content counts as a prompt count
 
         :- per_app_tracking
             - dev_current_tasks.txt has one [app: app_name] block per active app

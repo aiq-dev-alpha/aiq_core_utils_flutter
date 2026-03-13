@@ -23,7 +23,11 @@ class InputValidator {
   }
 
   static bool isValidPassword(String password, {int minLength = 8}) {
-    return password.length >= minLength;
+    if (password.length < minLength) return false;
+    if (!password.contains(RegExp(r'[A-Z]'))) return false;
+    if (!password.contains(RegExp(r'[a-z]'))) return false;
+    if (!password.contains(RegExp(r'[0-9]'))) return false;
+    return true;
   }
 
   static bool isValidDisplayName(String name) {
@@ -51,5 +55,60 @@ class InputValidator {
   static bool isValidBio(String bio, {int maxLength = 500}) {
     if (bio.length > maxLength) return false;
     return true;
+  }
+
+  static final _urlRegex = RegExp(
+    r'https?://|www\.|\.com/|\.net/|\.org/|\.io/',
+    caseSensitive: false,
+  );
+
+  static bool containsUrl(String text) {
+    return _urlRegex.hasMatch(text);
+  }
+
+  static String stripUrls(String text) {
+    return text.replaceAll(
+      RegExp(r'https?://\S+|www\.\S+', caseSensitive: false),
+      '[link removed]',
+    );
+  }
+
+  static bool isValidPhotoSize(int bytes, {int maxMb = 10}) {
+    return bytes <= maxMb * 1024 * 1024;
+  }
+
+  static bool isValidPhotoFormat(String path) {
+    final lower = path.toLowerCase();
+    return lower.endsWith('.jpg') ||
+        lower.endsWith('.jpeg') ||
+        lower.endsWith('.png') ||
+        lower.endsWith('.heic') ||
+        lower.endsWith('.heif') ||
+        lower.endsWith('.webp');
+  }
+
+  static String sanitizeEmail(String email) {
+    return email.trim().toLowerCase();
+  }
+
+  static final _htmlTagRegex = RegExp(r'<[^>]*>');
+
+  /// Sanitizes user text input by trimming whitespace, stripping HTML/script
+  /// tags, removing unsafe characters, and enforcing a maximum length.
+  /// Use this on all user-provided text before persisting to cloud storage.
+  static String sanitizeText(String input, {int maxLength = 500}) {
+    var result = input.trim();
+    result = result.replaceAll(_htmlTagRegex, '');
+    result = result
+        .replaceAll('<', '')
+        .replaceAll('>', '')
+        .replaceAll('"', '')
+        .replaceAll("'", '')
+        .replaceAll('&', '')
+        .replaceAll('\\', '');
+    if (result.length > maxLength) {
+      result = result.substring(0, maxLength);
+    }
+    return result;
   }
 }

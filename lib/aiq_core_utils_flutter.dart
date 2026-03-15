@@ -5,3 +5,4 @@ export 'src/services/input_validator.dart';
 export 'src/services/security_rules_service.dart';
 export 'src/services/content_pipeline_service.dart';
 export 'src/services/connectivity_service.dart';
+export 'src/extensions/iterable_extensions.dart';

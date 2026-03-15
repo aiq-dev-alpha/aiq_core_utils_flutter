@@ -13,6 +13,4 @@ dependencies:
     sdk: flutter
   connectivity_plus: ^6.0.0
   aiq_core_data_store_flutter:
-    git:
-      url: https://github.com/aiq-dev-alpha/aiq_core_data_store_flutter.git
-      ref: main
+    path: ../aiq_core_data_store_flutter

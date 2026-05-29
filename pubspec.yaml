@@ -11,6 +11,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  connectivity_plus: ^6.0.0
+  connectivity_plus: ^6.1.4
   aiq_core_data_store_flutter:
     path: ../aiq_core_data_store_flutter

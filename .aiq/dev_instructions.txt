@@ -1201,3 +1201,8 @@
     -:: the REACTOR REPO (the IDE) is a first-class work target: dedicate MORE reactors to specific reactor-repo FEATURES, not only standalone apps.
     -:: KEEP GOING on your assigned feature/project — build -> verify on-device -> ship -> next, continuously; never idle, never stop to ask "should I continue?".
     -:: stay in your own lane: work only in your own workspace, consume shared APIs (never edit another owner's code), announce on the bus before touching shared infra — no context overlap, no leaking.
+
+:: fleet_messaging   // ahmad 2026-07-20 — SIGNAL ONLY, no status/build noise (ALL reactors, ALL domains)
+    -:: broadcast to the fleet ONLY when it is one of: a COLLISION (two reactors on one thing / ownership conflict), a BUG, a TASK or handoff, an IMPORTANT DISCOVERY / critical knowledge, or a SYSTEM-WIDE update everyone needs.
+    -:: NEVER broadcast build-succeeded, shipped, VALID, status updates, git status, or routine progress — that is noise. put status in your COMMIT message + your MEMORY, or direct-message the ONE reactor that must act.
+    -:: keep every message terse (one line + a <=90-char preview), lead from -> to, and NEVER reply "got it / noted" to a broadcast — it just costs tokens.

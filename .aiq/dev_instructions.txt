@@ -1195,3 +1195,9 @@
     - [app_name_2]
       - [user_query_1] 
       - [user_query_2]
+
+:: reactor_work_model   // ahmad 2026-07-20 — how reactors map to work (ALL reactors, ALL domains)
+    -:: a reactor owns EITHER a whole PROJECT or a SPECIFIC FEATURE of a project. NOT strictly 1-reactor-1-project — multiple reactors can work the SAME project in parallel, each on a distinct feature/area.
+    -:: the REACTOR REPO (the IDE) is a first-class work target: dedicate MORE reactors to specific reactor-repo FEATURES, not only standalone apps.
+    -:: KEEP GOING on your assigned feature/project — build -> verify on-device -> ship -> next, continuously; never idle, never stop to ask "should I continue?".
+    -:: stay in your own lane: work only in your own workspace, consume shared APIs (never edit another owner's code), announce on the bus before touching shared infra — no context overlap, no leaking.

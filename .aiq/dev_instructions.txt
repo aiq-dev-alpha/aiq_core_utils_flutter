@@ -245,7 +245,6 @@
           - when cloned into a project they appear as `dev_[name]`
 
 
-
   :: naming_conventions                                                                                                                  
         - file names follow platform and framework standards (dart: snake_case, descriptive nouns)
         - name files after what they contain, not actions or adjectives (user_profile.dart not manage_users.dart)                          
@@ -770,7 +769,6 @@
       - each pass is distinct work with its own commit tagged [PASS1] [PASS2] [PASS3]
 
 
-
 :: recurring_phases
 
       ** IMPORTANT TO CONSIDER THESE WHEN MAKING NEW PHASES -> STEPS -> TASKS AND ADDDING THEM TO `dev_plan.txt` INEJECTING THEM INTO VARIOUS PHASE STAGES AS DUPLICATES SO AI CAN REDO THE TASK FULLY AND ACTUALLY MAKE IMPROVEMENTS 
@@ -1111,8 +1109,6 @@
     used as git submodules across all flutter apps
 
 
-
-
   :: project_info
         
     [template_file :— project root folder]                                                        
@@ -1161,14 +1157,11 @@
           - provides direction to dispensary turn by turn also route preview
 
 
-
-
     :- features
       :- feature categorie[s]
         - [feature heading]     // simple easy to understand few words 
             - {feature with enough detail to understand scope}
             {2-3 line per feature fully explaining it}
-
 
 
     :- dev_tools
@@ -1177,7 +1170,6 @@
 
     :- status
       - {current phase and progress}
-
 
 
 :: volatile
@@ -1206,3 +1198,20 @@
     -:: broadcast to the fleet ONLY when it is one of: a COLLISION (two reactors on one thing / ownership conflict), a BUG, a TASK or handoff, an IMPORTANT DISCOVERY / critical knowledge, or a SYSTEM-WIDE update everyone needs.
     -:: NEVER broadcast build-succeeded, shipped, VALID, status updates, git status, or routine progress — that is noise. put status in your COMMIT message + your MEMORY, or direct-message the ONE reactor that must act.
     -:: keep every message terse (one line + a <=90-char preview), lead from -> to, and NEVER reply "got it / noted" to a broadcast — it just costs tokens.
+
+
+:: build_machine ::= external_first ::= box_is_last_resort
+
+  ** priority order (every reactor, every build)
+    - OPTION 1 (default) = an EXTERNAL build machine. ms-01 (mac_studio_ultra / M1 Ultra) is the strongest/default;
+      macbook_air + windows cover their native targets. every reactor builds on them in parallel over the outbound
+      cloudflare tunnel, attributed per-reactor — no inbound port, no local build, no OOM.
+        - apps        -> reactor-build ms-01 <platform> build   (react_web | flutter_* | python_test | gradle | rust …)
+        - reactor-ide -> reactor-ship                           (builds + deploys on ms-01)
+    - LAST RESORT = the INTERNAL cloud host (this hetzner box), ONLY when the external machine is genuinely
+      unreachable (`reactor-build ms-01 status` is down). reactor-ship auto-falls-back to a CLEAN, bounded box build.
+
+  ** never hand-build on the box
+    - a raw `next build` / `npm run build` on the box is OOM-prone AND the box janitor (reactor-healthcare) hard-caps
+      non-critical processes at 2G and kill-9s them, so the build dies mid-flight and wastes memory. ALWAYS go through
+      reactor-build / reactor-ship so it lands on the external machine (or the clean bounded box-fallback scope).

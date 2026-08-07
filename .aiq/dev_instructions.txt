@@ -1215,3 +1215,10 @@
     - a raw `next build` / `npm run build` on the box is OOM-prone AND the box janitor (reactor-healthcare) hard-caps
       non-critical processes at 2G and kill-9s them, so the build dies mid-flight and wastes memory. ALWAYS go through
       reactor-build / reactor-ship so it lands on the external machine (or the clean bounded box-fallback scope).
+
+
+:: naming_and_vocabulary
+    - feature names, headings, sub-headings: lowercase_with_underscores (e.g. aiq_dsl_notation, aiq_live_view, aiq_live_debug, reactor_cloud_host); never Title Case, never dash
+    - product / host terms lowercase: aiq, hetzner box
+    - PRESERVE verbatim — never homophone-rewrite or Title-Case: fleet terms (R1..R90 / reactor-N, RT1, Q, Q-Prime, Council, orchestrator, vdom/hdom) and programming acronyms (JSON, YAML, SQL, API, CLI, SDK, HTTP, SSH, DNS, URL, npm, tsx, OAuth, JWT, DPoP, PTY, OTA, WASM)
+    - canonical vocabulary + acronym list = docs/aiq_vocabulary.md (reactor-ide repo); dictation/RT1 apply it in BOTH the recognizer-correction layer and the wand/route prompt (aiq-vocab.mjs)

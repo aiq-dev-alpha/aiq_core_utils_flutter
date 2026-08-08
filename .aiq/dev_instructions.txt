@@ -1222,3 +1222,13 @@
     - product / host terms lowercase: aiq, hetzner box
     - PRESERVE verbatim — never homophone-rewrite or Title-Case: fleet terms (R1..R90 / reactor-N, RT1, Q, Q-Prime, Council, orchestrator, vdom/hdom) and programming acronyms (JSON, YAML, SQL, API, CLI, SDK, HTTP, SSH, DNS, URL, npm, tsx, OAuth, JWT, DPoP, PTY, OTA, WASM)
     - canonical vocabulary + acronym list = docs/aiq_vocabulary.md (reactor-ide repo); dictation/RT1 apply it in BOTH the recognizer-correction layer and the wand/route prompt (aiq-vocab.mjs)
+
+
+:: dev_plan_per_category_and_context_hygiene
+    ::= 2026-08-08 token-efficiency rework of the .aiq planning loop
+
+    :! dev_plan is SPLIT PER CATEGORY. the monolithic dev_plan.txt is refactored into .aiq/dev_items/{category}/ — each category folder holds 4 files: dev_plan.txt, dev_bugs.txt, dev_tasks.txt, dev_ui_bugs.txt. category = the :: domain_* / layer sections of the old plan.
+    :! load ONLY the ACTIVE category's .aiq/dev_items/{category}/dev_plan.txt when advancing phases; finish that category, then move to the next. NEVER load the old monolithic dev_plan.txt (kept only as a backup) or dev_overall_tasks.txt (ledger) during normal operation.
+    :! normal operation reads ONLY dev_current_phase.txt (active phase/step/task). copy the next phase into dev_current_phase.txt and mark the old one done in that category's dev_plan.txt.
+    :! CONTEXT HYGIENE — clear-then-reload: re-read dev_instructions.txt + project_info.txt every 30 prompts, but FIRST /clear the context. never re-read onto an already-full context (that loads the same thing twice). clearing first refreshes what the ai forgets AND caps context growth; the bootstrap runs after /clear and reloads dev_instructions.txt + project_info.txt + dev_current_phase.txt, then resumes.
+    :! WHY we loop at all: only because the ai forgets over a long run, memory drifts, or memory gets accidentally edited — the periodic clear+reload is the anti-drift refresh, nothing more. keep it lean.

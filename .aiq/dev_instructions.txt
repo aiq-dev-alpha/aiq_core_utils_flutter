@@ -1278,3 +1278,14 @@
     - FIDO key (hardware possession) = required FRESH for every sensitive action, to enroll a device, and to raise the
       daily tier. stamp the daily-first gate ONLY after the second factor completes, never on the password alone; the
       hourly tier must carry a real factor, not a second PIN.
+
+
+:: github_actions ::= BANNED ::= keep_disabled_everywhere
+
+  ** GitHub Actions / CI is an ABSOLUTE no — it has billed real money (Actions minutes) more than once.
+    - NEVER enable Actions on any repo, NEVER add a workflow that runs on push/schedule, NEVER trigger workflow_dispatch.
+    - Actions is DISABLED at the repo level on EVERY repo (Settings -> Actions -> Disabled). if you EVER see it re-enabled, disable it again immediately.
+    - "Codespaces Prebuilds" count as Actions and were the hidden burn (they fire on every push to main + a schedule) — keep them off.
+    - the box re-asserts this on a cron via the enforcer: .aiq/dev_scripts/disable-actions-sweep.mjs (run under aiq_vault: GH_TOKEN=github.token).
+  ** builds NEVER run in CI — every build goes through the external build machine (see :: build_machine): reactor-build / reactor-ship on mac_studio_ultra; box only as last resort.
+  ** if a push could ever hit a workflow, put [skip ci] in the commit subject.

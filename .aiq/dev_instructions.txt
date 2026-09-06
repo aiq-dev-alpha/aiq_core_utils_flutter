@@ -1329,3 +1329,32 @@
       presence is DISRUPTIVE and can be OUTWARD-FACING (colleagues see it). CONFIRM before a live action, keep the
       footprint minimal, and prefer the box-drives-the-Pi path over installing anything on the machine.
     - every action a tool takes on a real machine is appended to pikvm-tools/kvm-actions.log (audit trail).
+
+
+:: aiq_kvm_ocr_tools_test_workflow ::= develop_without_touching ::= snapshot_and_verify_visually
+
+  ** the rule
+    - DEVELOP and TEST the KVM/OCR tools WITHOUT driving the machine. a snapshot is READ-ONLY — kvm._snap_once() sends
+      NO input — so you can SEE the screen freely. you almost never need to click/type on the real device to perfect a
+      script; you need to see what the OCR returned vs what is actually on screen.
+
+  ** the loop (capture -> look -> compare -> fix)
+    - capture the current screen to a .jpg (read-only), then LOOK at it (open/Read the image) so you have the visual
+      ground truth.
+    - run the OCR script on that frame and compare its output (text, boxes, detected element coords) to what you can see.
+      draw the detections onto the image and view it to confirm a box lands on the real element ("visually confirm").
+    - fix the script, re-run on the SAME frame, repeat. build a tiny eval that checks OCR output against known on-screen
+      strings and drive it to 100% (foreground/find/read should be 100% on a real capture).
+
+  ** prove detection is DYNAMIC by changing the size
+    - NEVER hardcode screen pixels. every region is a FRACTION of the frame, or RELATIVE to a detected anchor.
+    - verify by testing across window/screen sizes: scale the captured frame to several resolutions (e.g. 1280x800,
+      1366x768, 1920x1080, 2560x1440) and confirm every detector still lands correctly at each. a detector that only
+      works at one size is a BUG (the classic tell: works at 1920x1080, reads nothing at 1366x768).
+
+  ** validate tool logic OFFLINE, never on the live device
+    - load the tool as a module and mock kvm with a trip-wire that RAISES if any input method is called; assert that
+      help / unknown-args / no-args paths touch NOTHING. never run a live-device command (not even `--help`) as a
+      "validation" step — a mis-parsed arg has cycled windows on a live machine.
+    - only after offline + capture validation, run the REAL tool ONCE, attended, when the owner is clear. read-only
+      status checks (e.g. reading a colour/state off a snapshot) are always safe to run.

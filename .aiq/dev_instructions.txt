@@ -1300,3 +1300,32 @@
 - flavours FULLY SEPARATE at the surface: each flavour has its own controls, window chrome and app set; NO sideways sharing of app code / native APIs between flavours. All sharing is DOWNWARD into the substrate.
 - app classification: class-A cross-platform enterprise/premium/large apps = Rust-first shared core, reskinned (presentation = f(skin, formFactor)); class-B small + OS-signature + ALL mobile/tablet stock (and most desktop stock) apps = 100% per-OS separate build, faithful clone per flavour, NO shared app core. Never "one calculator, five skins".
 - clean-room law (stay lawsuit-proof): ship only our own bytes/assets (no traced fonts/icons/wallpapers/sounds); original skin names + no logos (nominative reference only); run our clones + open/self-built binaries, never others' signed/DRM'd apps (no DRM circumvention); distribute where interpreters are allowed (TestFlight-internal / EU-DMA / web / notarized-mac). App-Store review != a lawsuit; be defensible, never disguised.
+
+
+:: aiq_kvm_workflow ::= drive_real_devices ::= human_hid_over_pikvm
+
+  ** what this is
+    - the AIQ way to OPERATE a real machine (the Macs / PCs) over its PiKVM: keyboard, mouse, screen — as if a person
+      were sitting at it. tools live in user/2/tools/pikvm-tools/ (kvm.py = input+screen, ocr/ + ocr-tools/ = screen
+      reading, switch-app / teams-status = actions). testing/developing those tools is a SEPARATE doc: see
+      aiq_kvm_ocr_tools_test_workflow — never conflate "use the device" with "test the tool".
+
+  ** every event is real hardware
+    - input leaves the box as an HID event from the PiKVM's emulated USB gadget, so the target OS cannot tell it from a
+      real keyboard/mouse. NOTHING is installed on the target and NO accessibility/automation permission is used. this
+      is what keeps it MDM-safe on a managed laptop.
+    - reach a Pi by its tailnet IP via kvm.py (PIKVM_HOST). pi<->machine map: kvm-01=windows, kvm-02=mac_studio (ms-01),
+      kvm-03=macbook_air. admin/root creds are in gcloud Secret Manager (project aiq-deploy-1), never in code.
+
+  ** act like a person, not a robot
+    - motion is modelled (bezier arc + min-jerk velocity + overshoot-then-correct + tremor); typing has human cadence;
+      the websocket HID channel carries continuous motion (~30k events/s), REST is the fallback. never teleport the
+      cursor or spray keystrokes.
+    - RESPECT the human at the keyboard: is_locked() refuses to type on a lock screen; a focus-guard aborts typing the
+      instant the frontmost app changes; wait_idle() waits for a gap instead of fighting for the keyboard.
+
+  ** these are REAL work machines
+    - especially the MacBook Air (a corporate/DLP-monitored machine). grabbing focus, switching windows or setting
+      presence is DISRUPTIVE and can be OUTWARD-FACING (colleagues see it). CONFIRM before a live action, keep the
+      footprint minimal, and prefer the box-drives-the-Pi path over installing anything on the machine.
+    - every action a tool takes on a real machine is appended to pikvm-tools/kvm-actions.log (audit trail).

@@ -1358,3 +1358,23 @@
       "validation" step — a mis-parsed arg has cycled windows on a live machine.
     - only after offline + capture validation, run the REAL tool ONCE, attended, when the owner is clear. read-only
       status checks (e.g. reading a colour/state off a snapshot) are always safe to run.
+
+
+:: reactor_cron_jobs ::= one_index ::= keep_it_in_sync
+
+  ** the index
+    - EVERY scheduled job on the reactor box is listed in ONE file: /root/local_data/.aiq/reactor-cron-jobs.txt
+      (lowercase). it is the source of truth. READ it before adding a job (avoid duplicates / schedule
+      collisions) and UPDATE it whenever a job is added, changed, disabled or removed.
+
+  ** the standard (reactor-box cron)
+    - default location = the root crontab (`crontab -l`), runs in UTC. use /etc/cron.d/<name> ONLY for a
+      non-UTC job, with `CRON_TZ=` at the top so it can't shift the UTC jobs.
+    - a cron LINE calls a SCRIPT (never inline logic); scripts live under the owning reactor's tree
+      (user/N/tools/…, a repo's .aiq/dev_scripts/…) or /root/watchdog/ for box-health jobs.
+    - each index row = schedule | command | purpose | owner (reactor N / tool) | log. jobs log to their own
+      file or are silent by design.
+    - disable by commenting the crontab line `#DISABLED-YYYYMMDD-<why>` and moving its index row to the
+      disabled/staged section — never delete history silently.
+    - a destructive or OUTWARD-FACING job (touches a real machine, commits to repos, emails) gets an owner
+      ack before it is enabled, and is staged (documented, not installed) until then.

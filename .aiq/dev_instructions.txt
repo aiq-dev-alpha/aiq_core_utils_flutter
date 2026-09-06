@@ -1378,3 +1378,24 @@
       disabled/staged section — never delete history silently.
     - a destructive or OUTWARD-FACING job (touches a real machine, commits to repos, emails) gets an owner
       ack before it is enabled, and is staged (documented, not installed) until then.
+
+
+:: aiq_reactor_jobs ::= one_index ::= keep_it_in_sync
+
+  ** what + where
+    - EVERY scheduled job on the reactor box is listed in ONE file: /root/local_data/.aiq/aiq-reactor-jobs.txt
+      (lowercase). source of truth: READ it before adding a job (avoid duplicates / schedule collisions),
+      UPDATE it on every add / change / disable / remove.
+
+  ** the standard (reactor-box cron)
+    - TIMEZONE: EVERYTHING runs in America/Toronto. `CRON_TZ=America/Toronto` is the FIRST line of the root
+      crontab, so every schedule is Toronto local time (DST-correct) - NOT UTC. keep it first; a
+      /etc/cron.d/<name> job sets its own `CRON_TZ=America/Toronto`.
+    - LOCATION: default = the root crontab (`crontab -l`); /etc/cron.d/<name> only when a job needs its own env.
+    - a cron LINE calls a SCRIPT (never inline logic); scripts live under the owning reactor's tree
+      (user/N/tools/…, a repo's .aiq/dev_scripts/…) or /root/watchdog/ for box-health jobs. each index row =
+      schedule | command | purpose | owner (reactor N / tool) | log (own file, or silent).
+    - disable by commenting the crontab line `#DISABLED-YYYYMMDD-<why>` and moving its row to disabled/staged;
+      never delete history silently.
+    - a destructive or OUTWARD-FACING job (touches a real machine, commits to repos, emails) gets an owner ack
+      and stays STAGED (documented, not installed) until then.

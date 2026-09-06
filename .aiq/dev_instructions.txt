@@ -1383,3 +1383,31 @@
       never delete history silently.
     - a destructive or OUTWARD-FACING job (touches a real machine, commits to repos, emails) gets an owner ack
       and stays STAGED (documented, not installed) until then.
+
+
+:: aiq_timezone ::= America/Toronto ::= never_UTC
+
+  ** the rule
+    - the ONE timezone for everything AIQ is America/Toronto (Toronto, Ontario, Canada; EDT/EST, DST-aware).
+      NEVER present, log, schedule or default to UTC anywhere a human reads a time. "the AI likes UTC" is not
+      a reason. the canonical constant is AIQ_TIMEZONE = "America/Toronto".
+
+  ** infrastructure
+    - reactor box: BOTH the system clock and cron are America/Toronto (timedatectl set-timezone + the
+      CRON_TZ line; see :: aiq_reactor_jobs).
+    - Cloudflare: the worker runtime clock is UTC and CF CRON TRIGGERS ARE UTC-ONLY (platform limitation - no
+      timezone field). so STORE timestamps as epoch / ISO-UTC (unambiguous), but FORMAT every user-facing or
+      logged time in America/Toronto. schedule a CF cron at the UTC time equal to the intended Toronto time
+      AND comment the Toronto intent; because that fixed offset drifts at DST, prefer the DST-safe pattern:
+      trigger more often and gate the handler on Toronto local time.
+
+  ** code (store UTC, render Toronto)
+    - JS/TS: `d.toLocaleString("en-CA", { timeZone: "America/Toronto", hour12: false })` or an
+      Intl.DateTimeFormat with `timeZone: "America/Toronto"`. never show a bare `toISOString()`.
+    - Dart/Flutter: format against the `America/Toronto` location (timezone package), not the device default.
+    - Python: `datetime.now(ZoneInfo("America/Toronto"))` for display; keep storage tz-aware UTC.
+    - shell / box: local time is already Toronto; always print `%Z` so the zone is explicit.
+
+  ** principle
+    - the MACHINE stores UTC/epoch (unambiguous, DST-safe); the HUMAN always SEES Toronto. every clock a
+      person reads - dashboards, logs, timers, "last seen", schedules, timestamps - is America/Toronto.

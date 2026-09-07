@@ -1208,6 +1208,9 @@
       cloudflare tunnel, attributed per-reactor — no inbound port, no local build, no OOM.
         - apps        -> reactor-build ms-01 <platform> build   (react_web | flutter_* | python_test | gradle | rust …)
         - reactor-ide -> reactor-ship                           (builds + deploys on ms-01)
+          ** MANDATORY: reactor-ship deploys ALL 11 workers (reactor-ide + one..ten) SIMULTANEOUSLY via deploy-core, edge-verified.
+             This is the ONLY sanctioned reactor-ide deploy. NEVER deploy a subset / single worker / per-reactor —
+             a partial deploy strands the fleet on mismatched builds (chunk errors, "some reactors work, some don't").
     - LAST RESORT = the INTERNAL cloud host (this hetzner box), ONLY when the external machine is genuinely
       unreachable (`reactor-build ms-01 status` is down). reactor-ship auto-falls-back to a CLEAN, bounded box build.
 

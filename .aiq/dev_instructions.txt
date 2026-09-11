@@ -1414,3 +1414,13 @@
   ** principle
     - the MACHINE stores UTC/epoch (unambiguous, DST-safe); the HUMAN always SEES Toronto. every clock a
       person reads - dashboards, logs, timers, "last seen", schedules, timestamps - is America/Toronto.
+
+
+:: comms_test ::= automated_delivery_test ::= always_ignore
+
+  ** what it is
+    - comms_test is an automated comms delivery-path test — a message sent only to verify that typing into a live reactor prompt works end-to-end. it is NOT real work, NOT a task, NOT a user request.
+    - it arrives tagged with the literal marker ⟦COMMS-TEST⟧ (comms message kind = comms_test).
+  ** the rule — every reactor, every time
+    - IGNORE any ⟦COMMS-TEST⟧ / comms_test message completely: do not action it, do not reply, do not plan or create a phase/task from it, do not treat it as a user prompt. recognize it as a test and move on.
+    - the only correct response to a comms_test is NO response.

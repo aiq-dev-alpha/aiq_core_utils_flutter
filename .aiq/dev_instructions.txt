@@ -1445,9 +1445,13 @@
         delivered over OPS/SCM Ontario secure messaging (in Outlook search "secure" for the portal URL). iOS/iPad ships pipeline -> IPA -> App Distribution -> A1 group only.
 
   :- task: planview_timesheet
-      - ontario.pvcloud.com (resource code = credentials ledger). standard = 7.25h per WORKED weekday; deduct holidays and any day off.
-      - SUBMIT only up to the most recent PAST Friday — never a future or incomplete week. period numbers increment weekly and old periods lock (view-only).
-      - the client wants the submitted times as the EXCEL export (EFFORT01.xlsx), NOT a PDF.
+      - ontario.pvcloud.com (resource code = credentials ledger). standard = 7.25h per WORKED weekday; deduct holidays and any day off
+        (e.g. Civic Holiday first Mon of Aug; Labour Day first Mon of Sep). enter/sign the weekly period; SUBMIT only up to the most recent
+        PAST Friday — never a future or incomplete week. old periods lock (view-only). the session times out fast — re-login is Google SSO, no prompt.
+      - the VENDOR timesheet is the Planview REPORT **EFFORT01** (tile "MY26 - My Timesheets" under the top "My Tiles and Reports" tab). open it,
+        then use the report toolbar's export dropdown -> **Excel** to download **EFFORT01.xlsx**. it is the "My Weekly Timesheets" + "Detail Table"
+        report over a DATE RANGE (a rolling window that already covers the invoiced month = "all previous timelines"). this is what TWG wants —
+        NOT a single-week timesheet PDF (a single-week PDF is the WRONG artifact).
 
   :- task: twg_monthly_invoice
       - monthly invoice to The Walmer Group (TWG), emailed from the owner's personal gmail; built as an .xlsx with openpyxl on ms-01.
@@ -1455,11 +1459,16 @@
       - hours = 7.25/day minus holidays and time off (verify time off from the owner's Outlook mail to the project manager on RV2).
       - INVOICE NUMBER is critical: it increments monthly and TWG REJECTS a duplicate or wrong number — ALWAYS open the previous month's
         sent invoice to read the last number, then +1. recipients + last number = credentials ledger. a MISSED month still gets its own correctly-numbered invoice.
-      - openpyxl gotcha: re-set each formula string to clear the template's STALE cached values, and set wb.calculation.fullCalcOnLoad = True so Excel recalculates on open.
+      - the invoice email to TWG carries the **invoice .xlsx AND the EFFORT01.xlsx timesheet TOGETHER** (see planview_timesheet). if the invoice already
+        went out alone, REPLY-ALL to that thread attaching EFFORT01.xlsx. openpyxl gotcha: re-set each formula string to clear the template's STALE
+        cached values, and set wb.calculation.fullCalcOnLoad = True so Excel recalculates on open.
 
   :- task: secure_file_send
       - OPS/SCM Ontario secure messaging (DeliverySlip, w.deliveryslip.com/scm-ontario, ontario.ca Google SSO) for anything going to gov / QA.
-      - it BLOCKS .msi and other executable types — RENAME to .zip before uploading.
+        it BLOCKS .msi and other executable types — RENAME to .zip before uploading.
+      - EGRESS FLOW for a Planview/DLP-box file (e.g. EFFORT01.xlsx): on RV2 send it as a Secure Message from the Ontario account to the owner's
+        personal gmail; then on the Mac open the DeliverySlip notification email -> "Go to my message" -> "Sign in with Google" (personal gmail) ->
+        open the message -> Download; then attach that file to the Gmail message/reply to the external recipient. (This is the compliant path off the DLP box.)
 
   :- task: device_keepalive
       - the QA iPad is MDM-managed and cannot be set to never-lock; a reactor cron nudges it (one key + a tiny mouse move) every ~60s over its Pi to keep it awake.
@@ -1467,4 +1476,4 @@
 
   ** cadence
     - WEEKLY: submit the Planview timesheet after Friday.
-    - MONTHLY: send the TWG invoice; never skip a month, and never send ahead of the current month.
+    - MONTHLY: send the TWG invoice WITH the EFFORT01 timesheet; never skip a month, and never send ahead of the current month.
